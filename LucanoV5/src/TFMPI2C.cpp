@@ -384,6 +384,7 @@ void TFMPI2C::recoverI2CBus()
 // Print status condition either `READY` or error type
 void TFMPI2C::printStatus()
 {
+  /*
     Serial.print(" Status: ");
     if( status == TFMP_READY)          Serial.print( "READY");
     else if( status == TFMP_SERIAL)    Serial.print( "SERIAL");
@@ -400,12 +401,14 @@ void TFMPI2C::printStatus()
     else if( status == TFMP_FLOOD)     Serial.print( "Ambient light saturation");
     else Serial.print( "OTHER");
    // Serial.println();
+   */
 }
 
 // Print error type and HEX values
 // of each byte in the data frame
 void TFMPI2C::printFrame()
 {
+  /*
     printStatus();
     // Print the Hex value of each byte of data
     Serial.print(" Data:");
@@ -416,12 +419,13 @@ void TFMPI2C::printFrame()
       Serial.print( frame[ i], HEX);
     }
     Serial.println();
+    */
 }
 
 // Print error type and HEX values of
 // each byte in the command response frame
 void TFMPI2C::printReply()
-{
+{/*
     printStatus();
     // Print the Hex value of each byte
     for( uint8_t i = 0; i < TFMP_REPLY_SIZE; i++)
@@ -430,7 +434,7 @@ void TFMPI2C::printReply()
       Serial.print( reply[ i] < 16 ? "0" : "");
       Serial.print( reply[ i], HEX);
     }
-    Serial.println();
+    Serial.println();*/
 }
 
 // This is Prompt for Y/N response

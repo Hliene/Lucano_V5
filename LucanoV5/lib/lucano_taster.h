@@ -7,6 +7,7 @@
 #define BUTTOM_2      29
 #define BUTTOM_3      30
 #define BUTTOM_4      31
+#define ATTACH_TREE   44
 
 #define BUTTOM_LOOPs  4096
 
@@ -18,6 +19,7 @@ uint8_t start_buttom(void);
 uint8_t confirmation_buttom(void);
 uint8_t plus_buttom(void);
 uint8_t minus_buttom(void);
+uint8_t attach_to_tree_buttom(void);
 
 
 #endif

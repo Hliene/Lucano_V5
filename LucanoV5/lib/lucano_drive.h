@@ -36,5 +36,6 @@ uint16_t _drive_UP(void);
 void _drive_DOWN(void);
 void _drive_STOP(void);
 void init_drive(void);
+void _attach_to_tree(void);
 
 #endif

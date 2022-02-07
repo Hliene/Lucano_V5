@@ -21,11 +21,25 @@ int branch_distance = 0;
  * 
  *****************************************************************************/
 void init_ISR_2(void){
+
+  TCCR2A = 0;// set entire TCCR1A register to 0
+  TCCR2B = 0;// same for TCCR1B
+
+  TCCR2A=(1<<WGM01);    //Set the CTC mode   
+  OCR2A=60000; //Value for ORC0A for 1ms
+ 
+  TIMSK2|=(1<<OCIE0A);   //Set the interrupt request
+  sei(); //Enable interrupt
+ 
+  TCCR2B|=(1<<CS12);    //Set the prescale 1/64 clock
+  TCCR2B|=(1<<CS10);
+
+  /*
   TCCR2A = (1<<WGM01);                // CTC Modus
   TCCR2B = (1<<CS10) | (1<<CS12);;    // Timer mode with 1024 prescler
-  OCR2A = 125;                        // Wert für das match Register =>125 ist ca. alle 1ms  
+  OCR2A = 249;                        // Wert für das match Register =>125 ist ca. alle 1ms  
   TIMSK2 |= (1<<OCIE2A);              // Compare Interrupt erlauben  
-  sei();
+  sei();*/
 }
 
 
@@ -49,5 +63,18 @@ ISR (TIMER2_COMPA_vect)
     else if(branch_thinkness > 5)                         //Wenn Ast vollständig gemessen zähle "branch_detactet" hoch um die Asterkennung zu entprellen
       branch_detactet = 1;
     */  
+ Serial.println("da");
+/*
+   distance =getTFminiDataI2C();
+  
+
+   if(distance <= 40) {                                  //Wenn Ast näher als 40cm ist
+    branch_thinkness = branch_thinkness+1;              //Zähler für Ast stärke
+    if(distance <= branch_distance)                     //Ermittel des geringsten abstand zum Ast, wenn nicht der kleinste abstand genommen wird ist der Wert zu hoch
+      branch_distance = distance;                       //Speichern des Abstandes
+    }
+    else if(branch_thinkness > 5)                         //Wenn Ast vollständig gemessen zähle "branch_detactet" hoch um die Asterkennung zu entprellen
+      branch_detactet = 1;
+*/
 }
 

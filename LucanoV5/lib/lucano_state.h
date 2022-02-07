@@ -10,17 +10,27 @@
 
 //States 
 #define IDLE                    1
-#define HOOK_FALL_PROTECTION    2
-#define READY_TO_START          3
-#define WORK                    4
+#define ATTACH_TO_TREE          2
+#define HOOK_FALL_PROTECTION    3
+#define READY_TO_START          4
+#define WORK                    5
+#define REMOTE_CONTROL          9
+#define BATTERIE_EMPTY          10         
+
+
+// Defines for states
+#define BLINK_FREQ              0b0100000
+
 
 //Variabels
 
 
 //    Prototypes 
 uint16_t idle(void);
+uint16_t attach_to_tree(void);
 uint16_t hook_fall_protection(void);
 uint16_t work(void);
 uint16_t ready_to_start(void);
+uint16_t remote_control(void);
 
 #endif

@@ -33,5 +33,6 @@
 void init_actuator(void);
 uint8_t _actuator1(uint16_t extent);
 uint8_t _actuator2(uint16_t extent);
+uint8_t _actuator(uint16_t extent);
 
 #endif

@@ -13,6 +13,8 @@
 #include "..\lib\lucano_actuator.h"
 
 
+
+
 uint16_t state = 0;
 
 /**
@@ -46,20 +48,30 @@ void setup() {
   Display_Page_0();
   delay(10000);
   Display_Page_1();
-  delay(100);
   state = IDLE;
   init_lidar1();
- // init_ISR_2();
+  init_I2C_lidar();
+
+  //init_ISR_2();
 }
+int i;
 
 void loop() {
+
+//Dabble.processInput();
+
+//delay(1);
   
   switch(state)
     {
       case IDLE:
         state = idle();
         break;
-      
+
+      case ATTACH_TO_TREE:
+        state = attach_to_tree();
+        break;  
+
       case HOOK_FALL_PROTECTION:
         state = hook_fall_protection();
         break;
@@ -72,23 +84,28 @@ void loop() {
         state = work();
         break;
 
-      case 5:
-        
-        break;
-
       case 6:
         
         break;
-      
+
       case 7:
+        
         break;
 
       case 8:
         
+        break;  
+      
+      case REMOTE_CONTROL:
+        state = remote_control();
+        break;
+
+      case BATTERIE_EMPTY:
+        Serial.println("battier");
         break; 
       
       default:
-        /* TODO: Do we need a default state? */
+       
         break;
   }
 

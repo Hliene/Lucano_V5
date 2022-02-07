@@ -1,5 +1,6 @@
 #include "..\lib\lucano_drive.h"
 #include "..\lib\led_summer.h"
+#include "..\lib\lucano_actuator.h"
 #include <Arduino.h>
 
 uint32_t  counter_up =0;
@@ -82,7 +83,7 @@ uint16_t _drive_UP(void){
   current_FMR = analogRead(CURRENT_FMR);
   current_FML = analogRead(CURRENT_FML);
   
-  if(ERROR_FR | counter_up >= 500){
+  if(ERROR_FR | (counter_up >= 500)){
     delay(50);
     if(ERROR_FR){
       _drive_STOP();
@@ -154,6 +155,38 @@ void _drive_DOWN(void){
   analogWrite(PWM_FMR,(AntriebSpeed-10));
   delay(5);
   analogWrite(PWM_FR,(AntriebSpeed-10));
+}
+
+/*****************************************************************************
+ * Function name:     _attach_to_tree(void)
+ * 
+ * Descriptions:      Funktio zum Anstetzten den Lucano an dem Baum 
+ * 
+ * Stecker:           Spare 3
+ *                    Drive up =   Pin 2
+ *                    Drive Down = Pin 3
+ *                    
+ * Output pins:       D8  = PWM Finger links
+ *                    D9  = PWM Finger mitte links
+ *                    D10 = PWM Finger mitte rechts
+ *                    D11 = PWM Finger rechts
+ *                    
+ *                    D24 = direction Finger links 
+ *                    D25 = direction Finger mitte links 
+ *                    D26 = direction Finger mitte rechts
+ *                    D27 = direction Finger rechts
+ *****************************************************************************/
+void _attach_to_tree(void){
+
+    digitalWrite(DIR_FL,LOW);
+    digitalWrite(DIR_FML,LOW);
+    digitalWrite(DIR_FMR,HIGH);
+    digitalWrite(DIR_FR,HIGH);
+        
+    analogWrite(PWM_FL,(AntriebSpeed/2));
+    analogWrite(PWM_FML,(AntriebSpeed/2));
+    analogWrite(PWM_FMR,(AntriebSpeed/2));
+    analogWrite(PWM_FR,(AntriebSpeed/2));
 }
 
 /*****************************************************************************

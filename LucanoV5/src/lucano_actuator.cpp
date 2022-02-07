@@ -74,6 +74,22 @@ void init_actuator(void){
   pinMode(SEN3B,INPUT);
 }
 
+
+/*****************************************************************************
+ * Function name:     _actuator
+ * 
+ * Descriptions:      Funktion zur Ansterung aler Actuatoren
+ * 
+
+ *****************************************************************************/
+uint8_t _actuator(uint16_t extent){
+
+  if(_actuator1(extent) & _actuator2(1024-extent))
+    return 1;
+
+  return 0;
+}
+
 /*****************************************************************************
  * Function name:     _actuator1
  * 

@@ -116,3 +116,62 @@ void Display_baterie_value(uint16_t baterie_value){
   Serial2.write(0xFF); 
   Serial2.write(0xFF);
 }
+
+/*****************************************************************************
+ * Function name:     Dispaly_Page_4
+ * 
+ * Descriptions:      Funktion zum Aufrufen der vierten Display Seite
+ * 
+ * Stecker:           I2C_Display:
+ *                    Pin1  = 5V
+ *                    Pin2  = D21
+ *                    Pin3  = D20
+ *                    Pin4  = GND
+ *                    
+ *****************************************************************************/
+void Display_Page_4(void){
+  Serial2.print("page 4"); 
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF);
+}
+
+/*****************************************************************************
+ * Function name:     page4_remote_control
+ * 
+ * Descriptions:      Funktion zur Ausgabe der Batteriespannung
+ *                    Uebergabewert ist Batteriespannung in Prozent
+ * 
+ * Stecker:           I2C_Display:
+ *                    Pin1  = 5V
+ *                    Pin2  = D21
+ *                    Pin3  = D20
+ *                    Pin4  = GND
+ *                    
+ *****************************************************************************/
+void page4_txt2(void){
+
+  Serial2.print("page4.t2.txt="); 
+  Serial2.write(0x22);            //"
+  Serial2.print("Attention!"); 
+  Serial2.write(0x22);            //"
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF);
+
+  Serial2.print("page4.t3.txt="); 
+  Serial2.write(0x22);            //"
+  Serial2.print("Remote Control"); 
+  Serial2.write(0x22);            //"
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF);
+
+    Serial2.print("page4.t4.txt="); 
+  Serial2.write(0x22);            //"
+  Serial2.print("Bluetooth Connected"); 
+  Serial2.write(0x22);            //"
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF);
+}
