@@ -10,6 +10,10 @@
 #define ENDSTOP_HS_PIN    39                          //Endlagenschalter Ausleger Schere = NO
 #define ENDSTOP_HS        digitalRead(ENDSTOP_HS_PIN)     //Ist Hubsäule eingefahren
 
+#define LOOPS_REF_LIFTING_COLLUM    10
+
+extern uint16_t ref_counter;
+
 
 
 //Prototypes

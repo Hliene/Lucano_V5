@@ -40,11 +40,11 @@ void init_lidar1(void){
  *                    RX1     = Pin 3
  *                    GND     = Pin 4
  *****************************************************************************/
-void getTF_High_Data(int* distance, int* strength) {
-  static int i = 0; // war vorher char
-  int j = 0;        //war vorher char 
-  int checksum = 0;
-  static int rx[9];
+void getTF_High_Data(uint16_t* distance, uint16_t* strength) {
+  static uint16_t i = 0; // war vorher char
+  uint16_t j = 0;        //war vorher char 
+  uint16_t checksum = 0;
+  static uint16_t rx[9];
   while(Serial1.available())
   { 
     // Serial.println( "tfmini serial available" );
@@ -135,7 +135,7 @@ int getTFminiDataI2C(void) {
     tfmP.getData( tfDist, tfFlux, tfTemp); // Get a frame of data
 
     if( tfmP.status == TFMP_READY)         // If no error...
-      return tfDist;     
+      return (tfDist *10);     
     else
     {
         tfmP.printFrame();                 // Display error and data frame

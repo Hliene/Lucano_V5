@@ -53,12 +53,12 @@ void setup() {
   init_Buttons();
   init_lifting_column();
   init_Display();
-  Display_Page_0();
+  Display_Page("0");
   delay(1000);
   Display_Page("1");
   state = IDLE;
   init_lidar1();
-  //init_I2C_lidar();
+  init_I2C_lidar();
   //init_ISR_2();
 }
 int i;
@@ -139,6 +139,9 @@ void loop() {
 
       case BATTERIE_EMPTY:
         Serial.println("batterie");
+        Display_Page("4");
+        page4_text("Attention!","EMPTY BATTERIE","REMOTE CONTROL");
+        state = REMOTE_CONTROL;
         break; 
       
       default:

@@ -18,11 +18,11 @@ uint16_t delimbing_height = 0;
 uint16_t old_delimbing_height = 0;
 
 //Abhängig vom Baumdurchmesser
-uint16_t hook_fall_counter = 300;       // 20ms *300/2 = 3s
+uint16_t hook_fall_counter;       // 20ms *300/2 = 3s
 
 //height of the Lucano
-int Lucano_height = 0;
-int height_strength = 0;
+uint16_t Lucano_height = 0;
+uint16_t height_strength = 0;
 
 /*****************************************************************************
  * Function name:     idle
@@ -54,25 +54,27 @@ uint16_t idle(void)
         delimbing_height--;   
 
     if(old_delimbing_height != delimbing_height)
-        Display_delclimbing_height(delimbing_height);
+        Display_delclimbing_height(delimbing_height,"1");
 
     old_delimbing_height= delimbing_height;
 
+    hook_fall_counter = getTFminiDataI2C();
+
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    _battery('1');
+    _battery("1");
     //if(_battery())
        // return BATTERIE_EMPTY;
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(BT_CONNECT){
         Display_Page("4");
-        page4_remote_control();
-        old_baterie_value = 90;
+        page4_text("Attention!","Remote Control","Bluetooth Connected");
+        old_baterie_value = DEFALT_BAT_VAL;
         return REMOTE_CONTROL;
-    }
+    } 
 
     if (confirmation_buttom()){
-        delimbing_height =delimbing_height *100;
+        delimbing_height =delimbing_height *100; // Weil der LIDAR Sensor die Werte in Cm ausgibt
         delay(500);
         return HOOK_FALL_PROTECTION;
     }
@@ -103,7 +105,7 @@ uint16_t attach_to_tree(void){
     delay(20);
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(_battery('1'))
+    if(_battery("1"))
         return BATTERIE_EMPTY;
 
 
@@ -142,14 +144,14 @@ uint16_t hook_fall_protection(void){
         digitalWrite(GREENLED,HIGH);   
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(_battery('1'))
+    if(_battery("1"))
         return BATTERIE_EMPTY;
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(BT_CONNECT){
-        Display_Page_4();
-        page4_remote_control();
-        old_baterie_value = 90;
+        Display_Page("4");
+        page4_text("Attention!","Remote Control","Bluetooth Connected");
+        old_baterie_value = DEFALT_BAT_VAL;
         return REMOTE_CONTROL;
     } 
 
@@ -160,8 +162,6 @@ uint16_t hook_fall_protection(void){
     }
     else{ 
         _drive_STOP();       
-       // ref_scissor();
-      // Serial.println("HS");
         if (ref_column())
             return READY_TO_START;                    //Go to next state         
     }   
@@ -180,20 +180,22 @@ uint16_t hook_fall_protection(void){
  *****************************************************************************/
 uint16_t ready_to_start(void){
 
-    digitalWrite(REDLED,HIGH);
+    digitalWrite(REDLED,LOW);
+    digitalWrite(GREENLED,HIGH);
 
     Serial.println("ready_to_start");
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(_battery('1'))
+    if(_battery("1"))
         return BATTERIE_EMPTY;
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(BT_CONNECT){
-        Display_Page_4();
-        page4_remote_control();
+        Display_Page("4");
+        page4_text("Attention!","Remote Control","Bluetooth Connected");
+        old_baterie_value = DEFALT_BAT_VAL;
         return REMOTE_CONTROL;
-    }  
+    } 
 
     if(start_buttom())
         return WORK;
@@ -215,20 +217,17 @@ uint16_t ready_to_start(void){
  *****************************************************************************/
 uint16_t work(void){
 
+    digitalWrite(REDLED,LOW);
+    digitalWrite(GREENLED,HIGH);
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(_battery('1'))
+    if(_battery("1"))
         return BATTERIE_EMPTY;
-
-    digitalWrite(REDLED,LOW);
 
     getTF_High_Data(&Lucano_height, &height_strength);
         
     if(Lucano_height < delimbing_height) {
         _drive_UP();
-        Serial.print(Lucano_height);
-        Serial.print("\t");
-        Serial.println(delimbing_height);
     }
     else{
         _drive_STOP();
@@ -238,8 +237,9 @@ uint16_t work(void){
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(BT_CONNECT){
-        Display_Page_4();
-        page4_remote_control();
+        Display_Page("4");
+        page4_text("Attention!","Remote Control","Bluetooth Connected");
+        old_baterie_value = DEFALT_BAT_VAL;
         return REMOTE_CONTROL;
     } 
 
@@ -261,16 +261,18 @@ uint16_t remote_control(void){
     digitalWrite(REDLED,HIGH);
     digitalWrite(GREENLED,HIGH);
 
-    _battery('4');
+    _battery("4");
+
+    hook_fall_counter = getTFminiDataI2C();
 
     if(BT_CONNECT){
         return REMOTE_CONTROL;
         delay(20);
     }
 
-    hook_fall_counter = 300;
-    old_baterie_value = 90;
-    old_delimbing_height = 0;
+    old_baterie_value = DEFALT_BAT_VAL;
+    ref_counter = LOOPS_REF_LIFTING_COLLUM;
+    delimbing_height = 0;
     Display_Page("1");
     return IDLE;    
 }
@@ -292,21 +294,24 @@ uint16_t drive_back(void){
 
     getTF_High_Data(&Lucano_height, &height_strength);
     
-    if(Lucano_height > DRIVE_BACH_HEIGHT) {
+    if(Lucano_height > DRIVE_BACK_HEIGHT) {
         _drive_DOWN();
     }
     else{
         _drive_STOP();
         delay(500);
-        delimbing_height = 0;
+        delimbing_height = delimbing_height / 100;
         Display_Page("2");
+        Display_delclimbing_height(delimbing_height,"2");
+        old_baterie_value = DEFALT_BAT_VAL;
         return FINISHED;
     }
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(BT_CONNECT){
         Display_Page("4");
-        page4_remote_control();
+        page4_text("Attention!","Remote Control","Bluetooth Connected");
+        old_baterie_value = DEFALT_BAT_VAL;
         return REMOTE_CONTROL;
     } 
 
@@ -326,8 +331,24 @@ uint16_t drive_back(void){
  *****************************************************************************/
 uint16_t finished(void){
 
+    _battery("2");
+    hook_fall_counter = getTFminiDataI2C();
 
+    if (confirmation_buttom()){
+        Display_Page("1");
+        old_baterie_value = DEFALT_BAT_VAL;
+        ref_counter = LOOPS_REF_LIFTING_COLLUM;
+        delay(200);
+        return IDLE;
+    }
 
+    if(BT_CONNECT){
+        Display_Page("4");
+        page4_text("Attention!","Remote Control","Bluetooth Connected");
+        old_baterie_value = DEFALT_BAT_VAL;
+        return REMOTE_CONTROL;
+    } 
 
+    delay(20);
     return FINISHED;    
 }

@@ -12,7 +12,7 @@
 //Prototypes
 void init_battery(void);
 uint16_t read_battery(void);
-uint16_t _battery(char page);
+uint16_t _battery(const char* page);
 
 extern uint16_t old_baterie_value;
 

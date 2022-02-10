@@ -6,7 +6,7 @@ uint8_t max_current=    155;
 uint8_t PWM_UP=         0;
 uint8_t PWM_DOWN=       0;
 
-uint16_t ref_counter = 10;
+uint16_t ref_counter = LOOPS_REF_LIFTING_COLLUM;
 
 /*****************************************************************************
  * Function name:     init_lifting_column

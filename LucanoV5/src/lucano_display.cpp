@@ -24,44 +24,6 @@ void init_Display(void){
 }
 
 /*****************************************************************************
- * Function name:     Dispaly_Page_0
- * 
- * Descriptions:      Funktion zum Aufrufen der ersten Display Seite
- * 
- * Stecker:           I2C_Display:
- *                    Pin1  = 5V
- *                    Pin2  = D21
- *                    Pin3  = D20
- *                    Pin4  = GND
- *                    
- *****************************************************************************/
-void Display_Page_0(void){
-  Serial2.write("page 0"); 
-  Serial2.write(0xFF); 
-  Serial2.write(0xFF); 
-  Serial2.write(0xFF);
-}
-
-/*****************************************************************************
- * Function name:     Dispaly_Page_1
- * 
- * Descriptions:      Funktion zum Aufrufen der ersten Display Seite
- * 
- * Stecker:           I2C_Display:
- *                    Pin1  = 5V
- *                    Pin2  = D21
- *                    Pin3  = D20
- *                    Pin4  = GND
- *                    
- *****************************************************************************/
-void Display_Page_1(void){
-  Serial2.print("page 1"); 
-  Serial2.write(0xFF); 
-  Serial2.write(0xFF); 
-  Serial2.write(0xFF);
-}
-
-/*****************************************************************************
  * Function name:     Dispaly_delclimbing_height
  * 
  * Descriptions:      Funktion zur Ausgabe der Entanstungshöhe
@@ -74,8 +36,10 @@ void Display_Page_1(void){
  *                    Pin4  = GND
  *                    
  *****************************************************************************/
-void Display_delclimbing_height(uint16_t delclimbing_height){
-  Serial2.print("page1.t3.txt="); 
+void Display_delclimbing_height(uint16_t delclimbing_height, const char* page){
+  Serial2.print("page");
+  Serial2.print(page);
+  Serial2.print(".t3.txt="); 
   Serial2.write(0x22);                    //"
   Serial2.print(delclimbing_height);  
   Serial2.write(0x2E);                    //.
@@ -100,7 +64,7 @@ void Display_delclimbing_height(uint16_t delclimbing_height){
  *                    Pin4  = GND
  *                    
  *****************************************************************************/
-void Display_baterie_value(uint16_t baterie_value, char page){
+void Display_baterie_value(uint16_t baterie_value, const char* page){
   Serial2.print("page"); 
   Serial2.print(page); 
   Serial2.print(".j0.val="); 
@@ -116,25 +80,6 @@ void Display_baterie_value(uint16_t baterie_value, char page){
   Serial2.print(baterie_value); 
   Serial2.write(0x25);            //%
   Serial2.write(0x22);            //"
-  Serial2.write(0xFF); 
-  Serial2.write(0xFF); 
-  Serial2.write(0xFF);
-}
-
-/*****************************************************************************
- * Function name:     Dispaly_Page_4
- * 
- * Descriptions:      Funktion zum Aufrufen der vierten Display Seite
- * 
- * Stecker:           I2C_Display:
- *                    Pin1  = 5V
- *                    Pin2  = D21
- *                    Pin3  = D20
- *                    Pin4  = GND
- *                    
- *****************************************************************************/
-void Display_Page_4(void){
-  Serial2.print("page 4"); 
   Serial2.write(0xFF); 
   Serial2.write(0xFF); 
   Serial2.write(0xFF);
@@ -160,8 +105,10 @@ void Display_Page(const char* page){
   Serial2.write(0xFF);
 }
 
+
+
 /*****************************************************************************
- * Function name:     page4_remote_control
+ * Function name:     page4_text
  * 
  * Descriptions:      Funktion zur Ausgabe der Batteriespannung
  *                    Uebergabewert ist Batteriespannung in Prozent
@@ -173,11 +120,11 @@ void Display_Page(const char* page){
  *                    Pin4  = GND
  *                    
  *****************************************************************************/
-void page4_remote_control(void){
+void page4_text(const char* text1, const char* text2, const char* text3){
 
   Serial2.print("page4.t2.txt="); 
   Serial2.write(0x22);            //"
-  Serial2.print("Attention!"); 
+  Serial2.print(text1); 
   Serial2.write(0x22);            //"
   Serial2.write(0xFF); 
   Serial2.write(0xFF); 
@@ -185,7 +132,7 @@ void page4_remote_control(void){
 
   Serial2.print("page4.t3.txt="); 
   Serial2.write(0x22);            //"
-  Serial2.print("Remote Control"); 
+  Serial2.print(text2); 
   Serial2.write(0x22);            //"
   Serial2.write(0xFF); 
   Serial2.write(0xFF); 
@@ -193,7 +140,7 @@ void page4_remote_control(void){
 
     Serial2.print("page4.t4.txt="); 
   Serial2.write(0x22);            //"
-  Serial2.print("Bluetooth Connected"); 
+  Serial2.print(text3); 
   Serial2.write(0x22);            //"
   Serial2.write(0xFF); 
   Serial2.write(0xFF); 
