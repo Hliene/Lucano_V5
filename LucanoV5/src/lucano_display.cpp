@@ -100,14 +100,18 @@ void Display_delclimbing_height(uint16_t delclimbing_height){
  *                    Pin4  = GND
  *                    
  *****************************************************************************/
-void Display_baterie_value(uint16_t baterie_value){
-  Serial2.print("page1.j0.val="); 
+void Display_baterie_value(uint16_t baterie_value, char page){
+  Serial2.print("page"); 
+  Serial2.print(page); 
+  Serial2.print(".j0.val="); 
   Serial2.print(baterie_value);
   Serial2.write(0xFF); 
   Serial2.write(0xFF); 
   Serial2.write(0xFF);
 
-  Serial2.print("page1.t1.txt="); 
+  Serial2.print("page");
+  Serial2.print(page); 
+  Serial2.print(".t1.txt=");  
   Serial2.write(0x22);            //"
   Serial2.print(baterie_value); 
   Serial2.write(0x25);            //%
@@ -137,6 +141,26 @@ void Display_Page_4(void){
 }
 
 /*****************************************************************************
+ * Function name:     Dispaly_Page
+ * 
+ * Descriptions:      Funktion zum Aufrufen der vierten Display Seite
+ * 
+ * Stecker:           I2C_Display:
+ *                    Pin1  = 5V
+ *                    Pin2  = D21
+ *                    Pin3  = D20
+ *                    Pin4  = GND
+ *                    
+ *****************************************************************************/
+void Display_Page(const char* page){
+  Serial2.print("page ");
+  Serial2.print(page);  
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF);
+}
+
+/*****************************************************************************
  * Function name:     page4_remote_control
  * 
  * Descriptions:      Funktion zur Ausgabe der Batteriespannung
@@ -149,7 +173,7 @@ void Display_Page_4(void){
  *                    Pin4  = GND
  *                    
  *****************************************************************************/
-void page4_txt2(void){
+void page4_remote_control(void){
 
   Serial2.print("page4.t2.txt="); 
   Serial2.write(0x22);            //"

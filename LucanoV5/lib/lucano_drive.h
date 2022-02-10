@@ -29,7 +29,7 @@
 #define CURRENT_FML   A2
 #define CURRENT_FL    A3
 
-#define AntriebSpeed  200             // 0-255 Antriebsgeschwindigkeit der Räder 
+#define AntriebSpeed  250             // 0-255 Antriebsgeschwindigkeit der Räder 
 
 //      Prototypes
 uint16_t _drive_UP(void);

@@ -2,11 +2,11 @@
 #include <Arduino.h>
 
 uint8_t AS_Speed=       250;            //0-255
-uint8_t max_current=    135;
+uint8_t max_current=    155;
 uint8_t PWM_UP=         0;
 uint8_t PWM_DOWN=       0;
 
-uint16_t ref_counter = 50;
+uint16_t ref_counter = 10;
 
 /*****************************************************************************
  * Function name:     init_lifting_column
@@ -49,14 +49,16 @@ uint8_t lift_column(void){
   
   analog = analogRead(HS_CURRENT);  
    
-  if(PWM_UP < (AS_Speed - AS_Speed/10)){
-    PWM_UP = PWM_UP + (AS_Speed/9);
+  if(PWM_UP < (AS_Speed - AS_Speed/7)){
+    PWM_UP = PWM_UP + (AS_Speed/6);
     analogWrite(PWM_ASP,PWM_UP);
-    delay(80);
+    delay(200);
   } 
   else if(analog>max_current){
+    Serial.println("STOP");
     PWM_UP = 0;
     analogWrite(PWM_ASP,PWM_UP);
+    delay(500);
     return 1;
   }
   return 0;
@@ -84,7 +86,7 @@ uint8_t retract_column(void){
   }  
   else if (PWM_DOWN < (AS_Speed - AS_Speed/21)){
     PWM_DOWN = PWM_DOWN + (AS_Speed/20);
-    analogWrite(PWM_ASN,PWM_DOWN);
+    analogWrite(PWM_ASN,PWM_DOWN/2);
     delay(30);
   }
   return 0;
@@ -107,17 +109,18 @@ uint8_t ref_column(void){
   if(ref_counter){
     lift_column();
     ref_counter = ref_counter - 1;
-    delay(20);
+    delay(10);
   }
   else {
     if(PWM_UP == 0){
+      //Serial.println("DOWN");
       if(retract_column())
         return 1;
       }
       else{
         PWM_UP = 0;
         analogWrite(PWM_ASP,PWM_UP);
-        delay(100);
+        delay(10);
       }
   }
   return 0;

@@ -26,7 +26,7 @@ void init_ISR_2(void){
   TCCR2B = 0;// same for TCCR1B
 
   TCCR2A=(1<<WGM01);    //Set the CTC mode   
-  OCR2A=60000; //Value for ORC0A for 1ms
+  OCR2A = 500;          //Value for ORC0A for 1ms
  
   TIMSK2|=(1<<OCIE0A);   //Set the interrupt request
   sei(); //Enable interrupt
@@ -52,29 +52,9 @@ void init_ISR_2(void){
  *****************************************************************************/
 ISR (TIMER2_COMPA_vect)
 {
-  /*
-    getTFminiData1(&distance, &strength);                 //Einlesen des aktuellen Wertes des Lidar Sensors  
-    
-    if(distance <= 40) {                                  //Wenn Ast näher als 40cm ist
-      branch_thinkness = branch_thinkness+1;              //Zähler für Ast stärke
-      if(distance <= branch_distance)                     //Ermittel des geringsten abstand zum Ast, wenn nicht der kleinste abstand genommen wird ist der Wert zu hoch
-        branch_distance = distance;                       //Speichern des Abstandes
-    }
-    else if(branch_thinkness > 5)                         //Wenn Ast vollständig gemessen zähle "branch_detactet" hoch um die Asterkennung zu entprellen
-      branch_detactet = 1;
-    */  
- Serial.println("da");
-/*
-   distance =getTFminiDataI2C();
-  
+//getTF_High_Data(&distance,&strength);
 
-   if(distance <= 40) {                                  //Wenn Ast näher als 40cm ist
-    branch_thinkness = branch_thinkness+1;              //Zähler für Ast stärke
-    if(distance <= branch_distance)                     //Ermittel des geringsten abstand zum Ast, wenn nicht der kleinste abstand genommen wird ist der Wert zu hoch
-      branch_distance = distance;                       //Speichern des Abstandes
-    }
-    else if(branch_thinkness > 5)                         //Wenn Ast vollständig gemessen zähle "branch_detactet" hoch um die Asterkennung zu entprellen
-      branch_detactet = 1;
-*/
+
+
 }
 

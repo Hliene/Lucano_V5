@@ -1,7 +1,7 @@
 #include "..\lib\lucano_init.h"
 
 #include <Arduino.h>
-#include "Dabble.h"
+
 
 
 
@@ -28,12 +28,12 @@ void init_lucano(void){
 
 
 
-  /*
+  
   // Konfiguration der Timer Register
   TCCR0B = ((TCCR0B & 0b11111000) | 0x03);        //Timer 0 Teiler 64
   TCCR3B = ((TCCR3B & 0b11111000) | 0x01);        //Timer 3 Teiler 1
   TCCR1B = ((TCCR1B & 0b11111000) | 0x02);        //Timer 1 Teiler 8
-  */
+  
 
     // Konfiguration der Timer Register
   //TCCR0B = TCCR0B & 0b11111000 | 0x03;        //Timer 0 Teiler 64

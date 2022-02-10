@@ -4,8 +4,10 @@
 #include <Arduino.h>
 
 //Define
-#define MIN_DELCLIMBING_HEIGT 0
-#define MAX_DELCLIMBING_HEIGT 12
+#define MIN_DELCLIMBING_HEIGT   0
+#define MAX_DELCLIMBING_HEIGT   12
+
+#define DRIVE_BACH_HEIGHT       90      
 
 
 //States 
@@ -14,6 +16,8 @@
 #define HOOK_FALL_PROTECTION    3
 #define READY_TO_START          4
 #define WORK                    5
+#define DRIVE_BACK              6
+#define FINISHED                7
 #define REMOTE_CONTROL          9
 #define BATTERIE_EMPTY          10         
 
@@ -32,5 +36,7 @@ uint16_t hook_fall_protection(void);
 uint16_t work(void);
 uint16_t ready_to_start(void);
 uint16_t remote_control(void);
+uint16_t drive_back(void);
+uint16_t finished(void);
 
 #endif

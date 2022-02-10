@@ -145,15 +145,15 @@ void _drive_DOWN(void){
   
   digitalWrite(DIR_FL,LOW);
   digitalWrite(DIR_FML,LOW);
-  digitalWrite(DIR_FMR,HIGH);
+  digitalWrite(DIR_FMR,LOW);
   digitalWrite(DIR_FR,LOW);
       
   analogWrite(PWM_FL,(AntriebSpeed));
-  delay(5);
+  delay(50);
   analogWrite(PWM_FML,(AntriebSpeed));
-  delay(5);
+  delay(50);
   analogWrite(PWM_FMR,(AntriebSpeed-10));
-  delay(5);
+  delay(50);
   analogWrite(PWM_FR,(AntriebSpeed-10));
 }
 

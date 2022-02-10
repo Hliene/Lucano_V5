@@ -14,6 +14,12 @@
 
 
 
+#define CUSTOM_SETTINGS
+#define INCLUDE_GAMEPAD_MODULE
+//#include <evive.h>
+#include "..\lib\Dabble.h"
+
+
 
 uint16_t state = 0;
 
@@ -36,6 +42,8 @@ uint16_t state = 0;
 
 
 void setup() {
+
+  Dabble.begin(9600);  
   
   init_actuator();
   init_drive();
@@ -46,12 +54,11 @@ void setup() {
   init_lifting_column();
   init_Display();
   Display_Page_0();
-  delay(10000);
-  Display_Page_1();
+  delay(1000);
+  Display_Page("1");
   state = IDLE;
   init_lidar1();
-  init_I2C_lidar();
-
+  //init_I2C_lidar();
   //init_ISR_2();
 }
 int i;
@@ -84,12 +91,12 @@ void loop() {
         state = work();
         break;
 
-      case 6:
-        
+      case DRIVE_BACK:
+        state = drive_back();
         break;
 
-      case 7:
-        
+      case FINISHED:
+        state = finished();
         break;
 
       case 8:
@@ -97,11 +104,41 @@ void loop() {
         break;  
       
       case REMOTE_CONTROL:
+        Dabble.processInput();
+
+        if(GamePad.isDownPressed()){ 
+          _drive_DOWN();
+          Serial.println("Drive DOWN");    
+          if (ENDSTOP_HS == 0){                           // Wenn sich die Hubsäule während der Fahrt aus der endlage löst
+            analogWrite(PWM_ASN,100);
+          }
+          else 
+            analogWrite(PWM_ASN,0);
+
+        }
+        else if(GamePad.isUpPressed()){
+          _drive_UP();
+          Serial.println("Drive UP"); 
+          if (ENDSTOP_HS == 0){                           // Wenn sich die Hubsäule während der Fahrt aus der endlage löst
+            analogWrite(PWM_ASN,100);
+          }
+          else 
+            analogWrite(PWM_ASN,0);
+
+        }
+        else{
+          _drive_STOP();
+          analogWrite(PWM_ASP,0);
+          analogWrite(PWM_ASN,0);
+        } 
+
+        //analogWrite(PWM_ASN,0);
+        
         state = remote_control();
         break;
 
       case BATTERIE_EMPTY:
-        Serial.println("battier");
+        Serial.println("batterie");
         break; 
       
       default:

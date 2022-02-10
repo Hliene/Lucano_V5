@@ -29,7 +29,7 @@ void init_lidar1(void){
 }
 
 /*****************************************************************************
- * Function name:     getTFminiData
+ * Function name:     getTF_High_Data
  * 
  * Descriptions:      Funktion zur Auswertung der Daten des Lidar sensors
  *                    Angeschloss über UART
@@ -40,12 +40,12 @@ void init_lidar1(void){
  *                    RX1     = Pin 3
  *                    GND     = Pin 4
  *****************************************************************************/
-void getTFminiData1(int* distance, int* strength) {
+void getTF_High_Data(int* distance, int* strength) {
   static int i = 0; // war vorher char
   int j = 0;        //war vorher char 
   int checksum = 0;
   static int rx[9];
-  if(Serial1.available())
+  while(Serial1.available())
   { 
     // Serial.println( "tfmini serial available" );
     rx[i] = Serial1.read();

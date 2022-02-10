@@ -10,8 +10,8 @@
 #include "..\lib\lucano_actuator.h"
 #include "..\lib\lucano_lidar.h"
 #include "..\lib\lucano_timer.h"
+
 #include <Arduino.h>
-//#include <Dabble.h>
 
 
 uint16_t delimbing_height = 0;
@@ -19,6 +19,10 @@ uint16_t old_delimbing_height = 0;
 
 //Abhängig vom Baumdurchmesser
 uint16_t hook_fall_counter = 300;       // 20ms *300/2 = 3s
+
+//height of the Lucano
+int Lucano_height = 0;
+int height_strength = 0;
 
 /*****************************************************************************
  * Function name:     idle
@@ -36,6 +40,7 @@ uint16_t hook_fall_counter = 300;       // 20ms *300/2 = 3s
  *****************************************************************************/
 uint16_t idle(void)
 {
+    //Serial.println("IDLE");
     //retract_column();                 //Fals die Schere ausgefahren ist erst einfahren
 
     _drive_STOP();                      // Raeder muessen stehen bleiben 
@@ -53,23 +58,29 @@ uint16_t idle(void)
 
     old_delimbing_height= delimbing_height;
 
-   
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    _battery();
+    _battery('1');
     //if(_battery())
-        //return BATTERIE_EMPTY;
+       // return BATTERIE_EMPTY;
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(BT_CONNECT)
+    if(BT_CONNECT){
+        Display_Page("4");
+        page4_remote_control();
+        old_baterie_value = 90;
         return REMOTE_CONTROL;
+    }
 
-    if (confirmation_buttom())
+    if (confirmation_buttom()){
+        delimbing_height =delimbing_height *100;
+        delay(500);
         return HOOK_FALL_PROTECTION;
+    }
 
     if(attach_to_tree_buttom())
         return ATTACH_TO_TREE;    
 
-    delay(15);
+    delay(10);
 
     return IDLE;
 }
@@ -91,12 +102,11 @@ uint16_t attach_to_tree(void){
 
     delay(20);
 
+ //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if(_battery('1'))
+        return BATTERIE_EMPTY;
 
 
-//  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
- //   if(BT_CONNECT)
-  //      return REMOTE_CONTROL;    
-    
     if(attach_to_tree_buttom())     //Wenn Taster gedrückt dann State weiter durchlaufen
         return ATTACH_TO_TREE;
     else 
@@ -131,18 +141,27 @@ uint16_t hook_fall_protection(void){
     else 
         digitalWrite(GREENLED,HIGH);   
 
-    //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    //if(BT_CONNECT)
-    //    return REMOTE_CONTROL;   
+ //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if(_battery('1'))
+        return BATTERIE_EMPTY;
+
+//  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if(BT_CONNECT){
+        Display_Page_4();
+        page4_remote_control();
+        old_baterie_value = 90;
+        return REMOTE_CONTROL;
+    } 
 
  // <<<<<<<<<<<<<<<<<<<<drive the Tree half around>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(hook_fall_counter){
         hook_fall_counter = hook_fall_counter - (_drive_UP());
-        delay(20);
+        delay(2);
     }
     else{ 
         _drive_STOP();       
        // ref_scissor();
+      // Serial.println("HS");
         if (ref_column())
             return READY_TO_START;                    //Go to next state         
     }   
@@ -166,12 +185,15 @@ uint16_t ready_to_start(void){
     Serial.println("ready_to_start");
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   // if(_battery())
-   //     return BATTERIE_EMPTY;
+    if(_battery('1'))
+        return BATTERIE_EMPTY;
 
 //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    //if(BT_CONNECT)
-    //    return REMOTE_CONTROL;   
+    if(BT_CONNECT){
+        Display_Page_4();
+        page4_remote_control();
+        return REMOTE_CONTROL;
+    }  
 
     if(start_buttom())
         return WORK;
@@ -193,46 +215,33 @@ uint16_t ready_to_start(void){
  *****************************************************************************/
 uint16_t work(void){
 
+
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   // if(_battery())
-   //     return BATTERIE_EMPTY;
+    if(_battery('1'))
+        return BATTERIE_EMPTY;
 
     digitalWrite(REDLED,LOW);
 
-    Serial.println("work");
-
-
-delay(500);
-/*
-    getTFminiData1(&distance, &strength); 
-
-    if(distance <= 40) {                                  //Wenn Ast näher als 40cm ist
-      branch_thinkness = branch_thinkness+1;              //Zähler für Ast stärke
-      if(distance <= branch_distance)                     //Ermittel des geringsten abstand zum Ast, wenn nicht der kleinste abstand genommen wird ist der Wert zu hoch
-        branch_distance = distance;                       //Speichern des Abstandes
+    getTF_High_Data(&Lucano_height, &height_strength);
+        
+    if(Lucano_height < delimbing_height) {
+        _drive_UP();
+        Serial.print(Lucano_height);
+        Serial.print("\t");
+        Serial.println(delimbing_height);
     }
-    else if(branch_thinkness > 5)                         //Wenn Ast vollständig gemessen zähle "branch_detactet" hoch um die Asterkennung zu entprellen
-      branch_detactet = 1;
-
-
-    if(branch_detactet){
-        Serial.print("branch distance = ");
-        Serial.println(branch_distance);
-        Serial.print("branch thikness = ");
-        Serial.println(branch_thinkness);
-        branch_detactet = 0;
-        branch_thinkness = 0;
-        branch_distance = 41;
-
+    else{
+        _drive_STOP();
+        delay(500);
+        return DRIVE_BACK;
     }
-    delayMicroseconds(500); 
 
-    //Serial.print(branch_detactet);
-   // Serial.println(branch_distance);
-*/ 
-    //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    //if(BT_CONNECT)
-    //    return REMOTE_CONTROL;   
+//  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if(BT_CONNECT){
+        Display_Page_4();
+        page4_remote_control();
+        return REMOTE_CONTROL;
+    } 
 
     return WORK;
 }
@@ -252,43 +261,73 @@ uint16_t remote_control(void){
     digitalWrite(REDLED,HIGH);
     digitalWrite(GREENLED,HIGH);
 
-    Display_Page_4();
-    page4_txt2();
+    _battery('4');
 
-
-/*
-    Dabble.processInput();
-
-    if(GamePad.isDownPressed()){ 
-        _drive_DOWN();    
-        // Serial.println("down"); 
-        //delay(900);
-        if (ENDSTOP_HS == 0){                           // Wenn sich die Hubsäule während der Fahrt aus der endlage löst
-            analogWrite(PWM_ASN,100);
-        }
-    //delay(300);
+    if(BT_CONNECT){
+        return REMOTE_CONTROL;
+        delay(20);
     }
-    else if(GamePad.isUpPressed()){
-        _drive_UP(); 
-        if (ENDSTOP_HS == 0){                           // Wenn sich die Hubsäule während der Fahrt aus der endlage löst
-            analogWrite(PWM_ASN,100);
-        }
-    //delay(300);
+
+    hook_fall_counter = 300;
+    old_baterie_value = 90;
+    old_delimbing_height = 0;
+    Display_Page("1");
+    return IDLE;    
+}
+
+
+/*****************************************************************************
+ * Function name:     drive_back
+ * 
+ * Descriptions:      Funktion der State Maschiene 
+ *                    Der Lucano fährt solage runter bis er wieder 90cm über den Boden ist
+
+ * 
+ * Variabels:         
+ * 
+ *                   
+ *****************************************************************************/
+uint16_t drive_back(void){
+
+
+    getTF_High_Data(&Lucano_height, &height_strength);
+    
+    if(Lucano_height > DRIVE_BACH_HEIGHT) {
+        _drive_DOWN();
     }
     else{
         _drive_STOP();
-        analogWrite(PWM_ASN,0);
-        analogWrite(PWM_ASP,0);
-    } 
-*/
-
-    
-
-    while(BT_CONNECT){
-        //return REMOTE_CONTROL;
-        delay(200);
+        delay(500);
+        delimbing_height = 0;
+        Display_Page("2");
+        return FINISHED;
     }
 
-    Display_Page_1();
-    return IDLE;    
+//  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if(BT_CONNECT){
+        Display_Page("4");
+        page4_remote_control();
+        return REMOTE_CONTROL;
+    } 
+
+    return DRIVE_BACK;    
+}
+
+/*****************************************************************************
+ * Function name:     drive_back
+ * 
+ * Descriptions:      Funktion der State Maschiene 
+ *                    Der Lucano fährt solage runter bis er wieder 90cm über den Boden ist
+
+ * 
+ * Variabels:         
+ * 
+ *                   
+ *****************************************************************************/
+uint16_t finished(void){
+
+
+
+
+    return FINISHED;    
 }

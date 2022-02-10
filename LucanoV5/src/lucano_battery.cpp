@@ -60,13 +60,16 @@ uint16_t read_battery(void){
  *                      
  *          
  *****************************************************************************/
-uint16_t _battery(void){
+uint16_t _battery(char page){
+
 
 //  <<<<<<<<<<<<<<<<<<<< read baterie value >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     baterie_value = read_battery(); // read Batterie value
 
+    //Serial.println(baterie_value);
+
     if(old_baterie_value != baterie_value)
-        Display_baterie_value(baterie_value);
+        Display_baterie_value(baterie_value,page);
 
     old_baterie_value = baterie_value;   
 
