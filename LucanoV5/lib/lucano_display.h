@@ -15,5 +15,6 @@ void Display_delclimbing_height(uint16_t delclimbing_height, const char* page);
 void Display_baterie_value(uint16_t baterie_value, const char* page);
 uint16_t _battery(void);
 void page4_text(const char* text1, const char* text2, const char* text3);
+void Display_working_time(uint16_t sekunden, uint16_t minuten, const char* page);
 
 #endif

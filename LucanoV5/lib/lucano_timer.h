@@ -9,6 +9,10 @@ extern int branch_thinkness;
 extern int branch_detactet;
 extern int branch_distance;
 
+extern uint16_t millisekunden;
+extern uint16_t sekunde;
+extern uint16_t minute;
+
 
 //    Prototypes 
 void init_ISR_2(void);

@@ -83,7 +83,7 @@ uint16_t _drive_UP(void){
   current_FMR = analogRead(CURRENT_FMR);
   current_FML = analogRead(CURRENT_FML);
   
-  if(ERROR_FR | (counter_up >= 500)){
+  if(ERROR_FR){
     delay(50);
     if(ERROR_FR){
       _drive_STOP();
@@ -109,11 +109,11 @@ uint16_t _drive_UP(void){
   }
   else{   
     analogWrite(PWM_FR,AntriebSpeed);
-    delay(20);
+    delay(10);
     analogWrite(PWM_FMR,AntriebSpeed);
-    delay(20);
+    delay(10);
     analogWrite(PWM_FML,AntriebSpeed);
-    delay(20);
+    delay(10);
     analogWrite(PWM_FL,AntriebSpeed);
     if(counter_up>3)
       counter_up = counter_up/2;   

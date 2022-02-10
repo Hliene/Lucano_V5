@@ -44,7 +44,7 @@ uint16_t state = 0;
 void setup() {
 
   Dabble.begin(9600);  
-  
+  init_ISR_2();
   init_actuator();
   init_drive();
   init_battery();
@@ -59,7 +59,7 @@ void setup() {
   state = IDLE;
   init_lidar1();
   init_I2C_lidar();
-  //init_ISR_2();
+ 
 }
 int i;
 

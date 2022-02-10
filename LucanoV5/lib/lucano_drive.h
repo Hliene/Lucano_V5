@@ -6,8 +6,8 @@
 //      Stecker für Finger Antrieb
 #define PWM_FL        8               //PWM Finger Links
 #define PWM_FML       9               //PWM Finger Mitte Links
-#define PWM_FMR       11              //PWM Finger Mitte Rechts
-#define PWM_FR        10              //PWM Finger Rechts
+#define PWM_FMR       10              //PWM Finger Mitte Rechts
+#define PWM_FR        11              //PWM Finger Rechts
 
 #define DIR_FL        24              //direction Finger Links
 #define DIR_FML       25              //direction Finger Mitte Links

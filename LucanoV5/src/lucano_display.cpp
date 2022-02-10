@@ -52,6 +52,33 @@ void Display_delclimbing_height(uint16_t delclimbing_height, const char* page){
 }
 
 /*****************************************************************************
+ * Function name:     Display_working_time
+ * 
+ * Descriptions:      Funktion zur Ausgabe der Entanstungshöhe
+ *                    Uebergabewert ist die Entastungshoehe in Metern
+ * 
+ * Stecker:           I2C_Display:
+ *                    Pin1  = 5V
+ *                    Pin2  = D21
+ *                    Pin3  = D20
+ *                    Pin4  = GND
+ *                    
+ *****************************************************************************/
+void Display_working_time(uint16_t sekunden, uint16_t minuten, const char* page){
+  Serial2.print("page");
+  Serial2.print(page);
+  Serial2.print(".t6.txt="); 
+  Serial2.write(0x22);                    //"
+  Serial2.print(minuten);  
+  Serial2.print("."); 
+  Serial2.print(sekunden); 
+  Serial2.write(0x22); 
+  Serial2.write(0xFF);              
+  Serial2.write(0xFF); 
+  Serial2.write(0xFF);
+}
+
+/*****************************************************************************
  * Function name:     Dispaly_baterie_value
  * 
  * Descriptions:      Funktion zur Ausgabe der Batteriespannung

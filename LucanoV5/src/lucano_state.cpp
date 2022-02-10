@@ -197,8 +197,13 @@ uint16_t ready_to_start(void){
         return REMOTE_CONTROL;
     } 
 
-    if(start_buttom())
+    if(start_buttom()){
+        delay(500);
+        sekunde = 0;
+        minute = 0;
         return WORK;
+
+    }
 
     delay(20);
 
@@ -303,6 +308,8 @@ uint16_t drive_back(void){
         delimbing_height = delimbing_height / 100;
         Display_Page("2");
         Display_delclimbing_height(delimbing_height,"2");
+        Display_working_time(sekunde ,minute, "2");
+
         old_baterie_value = DEFALT_BAT_VAL;
         return FINISHED;
     }
@@ -336,6 +343,7 @@ uint16_t finished(void){
 
     if (confirmation_buttom()){
         Display_Page("1");
+        Display_delclimbing_height(delimbing_height,"1");
         old_baterie_value = DEFALT_BAT_VAL;
         ref_counter = LOOPS_REF_LIFTING_COLLUM;
         delay(200);
