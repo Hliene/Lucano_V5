@@ -7,6 +7,10 @@
 #define MIN_DELCLIMBING_HEIGT   0
 #define MAX_DELCLIMBING_HEIGT   12
 
+#define DIFF_HEIGT_SISSOR       30
+
+#define cm2m                    100
+
 #define DRIVE_BACK_HEIGHT       90    
 
 #define DEFALT_BAT_VAL          100

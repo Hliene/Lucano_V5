@@ -115,7 +115,9 @@ void Display_baterie_value(uint16_t baterie_value, const char* page){
 /*****************************************************************************
  * Function name:     Dispaly_Page
  * 
- * Descriptions:      Funktion zum Aufrufen der vierten Display Seite
+ * Descriptions:      Funktion zum Aufrufen einer Seite auf dem Display.
+ * 
+ * Ubergabewert:      Der übergabewert ist die jeweilige Seite
  * 
  * Stecker:           I2C_Display:
  *                    Pin1  = 5V

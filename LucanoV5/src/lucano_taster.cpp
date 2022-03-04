@@ -156,7 +156,7 @@ uint8_t start_buttom(void){
  *****************************************************************************/
 uint8_t attach_to_tree_buttom(void){
 
-  if(!digitalRead(ATTACH_TREE)){                             //Wenn Taster gedrückt   
+  if(digitalRead(ATTACH_TREE)){                             //Wenn Taster gedrückt   
     state_ATTACH_TO_TREE = (state_ATTACH_TO_TREE << 1);               //Zähler zum Entprellen nach links schiften 
     if(state_ATTACH_TO_TREE == BUTTOM_LOOPs)                    //Wenn anzahl erreicht gebe eine eins zurück
       return 1;                                

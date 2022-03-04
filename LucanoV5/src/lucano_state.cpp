@@ -74,7 +74,8 @@ uint16_t idle(void)
     } 
 
     if (confirmation_buttom()){
-        delimbing_height =delimbing_height *100; // Weil der LIDAR Sensor die Werte in Cm ausgibt
+        delimbing_height =delimbing_height * cm2m; // Weil der LIDAR Sensor die Werte in Cm ausgibt
+        delimbing_height = delimbing_height - DIFF_HEIGT_SISSOR;
         delay(500);
         return HOOK_FALL_PROTECTION;
     }
@@ -97,19 +98,21 @@ uint16_t idle(void)
 uint16_t attach_to_tree(void){
   
 // Actuatoren auf 0 Grad setzten 
-    if(_actuator(512))
+    //if(attach_to_tree_buttom())     //if(_actuator(512))
         _attach_to_tree();          // Wenn Actuatoren auf 0 Grad Räder bewegen  
-    else 
-        _drive_STOP();              //Sonst nicht fahren
+    //else 
+     //   _drive_STOP();              //Sonst nicht fahren
 
     delay(20);
+    
+   // Serial.println("da");
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(_battery("1"))
         return BATTERIE_EMPTY;
 
 
-    if(attach_to_tree_buttom())     //Wenn Taster gedrückt dann State weiter durchlaufen
+    if(digitalRead(ATTACH_TREE))     //Wenn Taster gedrückt dann State weiter durchlaufen
         return ATTACH_TO_TREE;
     else 
         _drive_STOP();              //Sonst nicht fahren
@@ -158,7 +161,7 @@ uint16_t hook_fall_protection(void){
  // <<<<<<<<<<<<<<<<<<<<drive the Tree half around>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(hook_fall_counter){
         hook_fall_counter = hook_fall_counter - (_drive_UP());
-        delay(2);
+        delay(20);
     }
     else{ 
         _drive_STOP();       
@@ -305,7 +308,8 @@ uint16_t drive_back(void){
     else{
         _drive_STOP();
         delay(500);
-        delimbing_height = delimbing_height / 100;
+        delimbing_height = delimbing_height + DIFF_HEIGT_SISSOR;
+        delimbing_height = delimbing_height / cm2m;
         Display_Page("2");
         Display_delclimbing_height(delimbing_height,"2");
         Display_working_time(sekunde ,minute, "2");
