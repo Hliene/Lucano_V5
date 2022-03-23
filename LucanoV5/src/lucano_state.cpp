@@ -10,6 +10,7 @@
 #include "..\lib\lucano_actuator.h"
 #include "..\lib\lucano_lidar.h"
 #include "..\lib\lucano_timer.h"
+#include "..\lib\lucano_bluetooth.h"
 
 #include <Arduino.h>
 
@@ -272,6 +273,8 @@ uint16_t remote_control(void){
     _battery("4");
 
     hook_fall_counter = getTFminiDataI2C();
+
+
 
     if(BT_CONNECT){
         return REMOTE_CONTROL;

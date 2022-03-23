@@ -11,6 +11,7 @@
 #include "..\lib\lucano_battery.h"
 #include "..\lib\lucano_scissor.h"
 #include "..\lib\lucano_actuator.h"
+#include "..\lib\lucano_bluetooth.h"
 
 
 
