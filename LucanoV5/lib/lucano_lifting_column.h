@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 // Ausleger Schere
-#define PWM_ASP           5                           //Ausleger Schere PWM 1
+#define PWM_ASP           7                           //Ausleger Schere PWM 1
 #define PWM_ASN           12                          //Ausleger Schere PWM 2
 #define HS_CURRENT        A12                         //Motorstrom Ausleger Schere
 #define ENDSTOP_HS_PIN    39                          //Endlagenschalter Ausleger Schere = NO

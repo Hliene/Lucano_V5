@@ -13,7 +13,7 @@
 #define PWM5        6
 #define PWM6        7
 
-#define ANALOG      150
+#define ANALOG      160
 
 #define FB1         A11
 #define FB2         A10
@@ -33,6 +33,8 @@
 void init_actuator(void);
 uint8_t _actuator1(uint16_t extent);
 uint8_t _actuator2(uint16_t extent);
+uint8_t _actuator3(uint16_t extent);
+uint8_t _actuator4(uint16_t extent);
 uint8_t _actuator(uint16_t extent);
 
 #endif

@@ -47,6 +47,8 @@ uint16_t idle(void)
     _drive_STOP();                      // Raeder muessen stehen bleiben 
     digitalWrite(GREENLED,HIGH);
     digitalWrite(REDLED,LOW);
+    
+    _actuator(100);
 
  // <<<<<<<<<<<<<<<<<<<< Adjust the declimbing height>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(plus_buttom() & (delimbing_height < MAX_DELCLIMBING_HEIGT))
@@ -75,9 +77,9 @@ uint16_t idle(void)
     } 
 
     if (confirmation_buttom()){
-        delimbing_height =delimbing_height * cm2m; // Weil der LIDAR Sensor die Werte in Cm ausgibt
-        delimbing_height = delimbing_height - DIFF_HEIGT_SISSOR;
-        delay(500);
+        delimbing_height =delimbing_height * cm2m;                                  // Weil der LIDAR Sensor die Werte in Cm ausgibt
+        delimbing_height = delimbing_height - DIFF_HEIGT_SISSOR;                    //Anpassung des Abstandes zur Erde
+        delay(500);                                                                 //Dela für den nächsten State
         return HOOK_FALL_PROTECTION;
     }
 
@@ -99,26 +101,23 @@ uint16_t idle(void)
 uint16_t attach_to_tree(void){
   
 // Actuatoren auf 0 Grad setzten 
-    //if(attach_to_tree_buttom())     //if(_actuator(512))
-        _attach_to_tree();          // Wenn Actuatoren auf 0 Grad Räder bewegen  
-    //else 
-     //   _drive_STOP();              //Sonst nicht fahren
+    if(_actuator(512))                 //if(_actuator(512))
+        _attach_to_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
+    else 
+        _drive_STOP();                  //Sonst nicht fahren
 
     delay(20);
-    
-   // Serial.println("da");
 
- //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(_battery("1"))
+
+    if(_battery("1"))                   //Ausgabe der Batteriespannung
         return BATTERIE_EMPTY;
 
-
-    if(digitalRead(ATTACH_TREE))     //Wenn Taster gedrückt dann State weiter durchlaufen
+    if(digitalRead(ATTACH_TREE))        //Wenn Taster gedrückt dann State weiter durchlaufen
         return ATTACH_TO_TREE;
     else 
-        _drive_STOP();              //Sonst nicht fahren
+        _drive_STOP();                  //Sonst nicht fahren
 
-    return IDLE;                    //Gehe zurück in State IDLE
+    return IDLE;                        //Gehe zurück in State IDLE
 }
 
 /*****************************************************************************
@@ -206,7 +205,6 @@ uint16_t ready_to_start(void){
         sekunde = 0;
         minute = 0;
         return WORK;
-
     }
 
     delay(20);
@@ -303,30 +301,28 @@ uint16_t remote_control(void){
 uint16_t drive_back(void){
 
 
-    getTF_High_Data(&Lucano_height, &height_strength);
+    getTF_High_Data(&Lucano_height, &height_strength);                          //Auslesen des LiDARs für die höhe
     
-    if(Lucano_height > DRIVE_BACK_HEIGHT) {
-        _drive_DOWN();
+    if(Lucano_height > DRIVE_BACK_HEIGHT) {                                     //fahre runter solange bis der Lucano wieder auf dem Bden ist
+        _drive_DOWN();      
     }
     else{
-        _drive_STOP();
-        delay(500);
-        delimbing_height = delimbing_height + DIFF_HEIGT_SISSOR;
-        delimbing_height = delimbing_height / cm2m;
-        Display_Page("2");
-        Display_delclimbing_height(delimbing_height,"2");
-        Display_working_time(sekunde ,minute, "2");
-
-        old_baterie_value = DEFALT_BAT_VAL;
+        _drive_STOP();                                                          //Anhalten
+        delay(500);                                                             //Eine halbe Sekunde warten
+        Display_Page("2");                                                      //Ausgabe der zweiten Seite
+        Display_delclimbing_height(delimbing_height,"2");                       //Ausgabe der geastenten höhe
+        Display_working_time(sekunde ,minute, "2");                             //Ausgabe der entastugszeit
+        delimbing_height = delimbing_height + DIFF_HEIGT_SISSOR;                //Die Höhenanpassung wirder rausnehmen
+        delimbing_height = delimbing_height / cm2m;                             //wieder von m auf cm umrechen damit die höhe im idle status wieder neu eingestellt werden kann
+        old_baterie_value = DEFALT_BAT_VAL;                                     //Alten Batteriewert neu setzten damit auf der neuen Seite der Batteriestand wieder ausgegeben wird
         return FINISHED;
     }
 
-//  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(BT_CONNECT){
-        Display_Page("4");
-        page4_text("Attention!","Remote Control","Bluetooth Connected");
-        old_baterie_value = DEFALT_BAT_VAL;
-        return REMOTE_CONTROL;
+    if(BT_CONNECT){                                                             //Wenn mit BT verbunden in den "remote control" state gehen
+        Display_Page("4");                                                      //Ausgabe der vierten Seite
+        page4_text("Attention!","Remote Control","Bluetooth Connected");        //Text für die BT-Verbindung ausgeben 
+        old_baterie_value = DEFALT_BAT_VAL;                                     //Alten Batteriewert neu setzten damit auf der neuen Seite der Batteriestand wieder ausgegeben wird
+        return REMOTE_CONTROL;  	                                            
     } 
 
     return DRIVE_BACK;    

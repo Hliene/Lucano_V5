@@ -84,7 +84,7 @@ void init_actuator(void){
  *****************************************************************************/
 uint8_t _actuator(uint16_t extent){
 
-  if(_actuator1(extent) & _actuator2(1024-extent))
+  if(_actuator1(extent) & _actuator2(1024-extent) & _actuator3(extent) & _actuator4(1024-extent))
     return 1;
 
   return 0;
@@ -117,7 +117,7 @@ uint8_t _actuator1(uint16_t extent){
    
   feedback1 = analogRead(FB1);
   newextent = extent +130;  
-  Serial.println(feedback1);
+  //Serial.println(feedback1);
   feedback1 = feedback1 +130;
   
   if(feedback1 < (newextent-130)){
@@ -140,12 +140,12 @@ uint8_t _actuator1(uint16_t extent){
     digitalWrite(DIRECTION2,LOW);
     analogWrite(PWM1,ANALOG/2);
   }
-  else if(feedback1 < (newextent-10)){
+  else if(feedback1 < (newextent-20)){
     digitalWrite(DIRECTION1,LOW);
     digitalWrite(DIRECTION2,HIGH);
     analogWrite(PWM1,ANALOG/2);
   }
-  else if(feedback1 > (newextent+10)){
+  else if(feedback1 > (newextent+20)){
      digitalWrite(DIRECTION1,HIGH);
     digitalWrite(DIRECTION2,LOW);
     analogWrite(PWM1,ANALOG/2);
@@ -166,16 +166,16 @@ uint8_t _actuator1(uint16_t extent){
  * 
  * Stecker:           Actuator 2
  *                    5V      = Pin 1
- *                    FB1     = Pin 2
+ *                    FB2     = Pin 2
  *                    OUT1    = Pin 3
  *                    OUT2    = Pin 4
  *                    GND     = Pin 5
  *                    
- * Output pins:       D3  = PWM 1
+ * Output pins:       D3  = PWM 2
  *                    D22 = direction OUT 
  *                    D23 = direction IN 
  *                      
- * Input pins:        A1  = Sen1A
+ * Input pins:        A1  = Sen1B
  *                    A10 = FB1
  *****************************************************************************/
 uint8_t _actuator2(uint16_t extent){
@@ -184,10 +184,9 @@ uint8_t _actuator2(uint16_t extent){
   
   feedback2 = analogRead(FB2);
   newextent = extent +130;    
-  Serial.println(feedback2);
+  //Serial.println(feedback2);
   feedback2 = feedback2 +130;
 
-  //Serial.println(feedback2);
   if(feedback2 > (newextent+130)){
     digitalWrite(DIRECTION1,LOW);
     digitalWrite(DIRECTION2,HIGH);
@@ -208,18 +207,153 @@ uint8_t _actuator2(uint16_t extent){
     digitalWrite(DIRECTION2,LOW);
     analogWrite(PWM2,ANALOG/2);
   }
-  else if(feedback2 > (newextent+10)){
+  else if(feedback2 > (newextent+20)){
     digitalWrite(DIRECTION1,LOW);
     digitalWrite(DIRECTION2,HIGH);
     analogWrite(PWM2,ANALOG/2);
   }
-  else if(feedback2 < (newextent-10)){
+  else if(feedback2 < (newextent-20)){
      digitalWrite(DIRECTION1,HIGH);
     digitalWrite(DIRECTION2,LOW);
     analogWrite(PWM2,ANALOG/2);
   }
   else{
     analogWrite(PWM2,0);
+    return 1;
+  }   
+  return 0;  
+}
+
+
+/*****************************************************************************
+ * Function name:     _actuator3
+ * 
+ * Descriptions:      Funktion zur Ansterung des dritten Actuators 
+ *                    Wenn Positin erreicht gibt funktion 1 zurück
+ *                    sonst eine 0
+ * 
+ * Stecker:           Actuator 3
+ *                    5V      = Pin 1
+ *                    FB3     = Pin 2
+ *                    OUT1    = Pin 3
+ *                    OUT2    = Pin 4
+ *                    GND     = Pin 5
+ *                    
+ * Output pins:       D4  = PWM 3
+ *                    D22 = direction OUT 
+ *                    D23 = direction IN 
+ *                      
+ * Input pins:        A2  = Sen2A
+ *                    A9 = FB3
+ *****************************************************************************/
+uint8_t _actuator3(uint16_t extent){
+
+   uint16_t newextent;
+   
+  feedback3 = analogRead(FB3);
+  newextent = extent +130;  
+  //Serial.println(feedback1);
+  feedback3 = feedback3 +130;
+  
+  if(feedback3 < (newextent-130)){
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+    analogWrite(PWM3,ANALOG);
+  }
+  else if(feedback3 > (newextent+130)){
+    digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+    analogWrite(PWM3,ANALOG);
+  }
+  else if(feedback3 < (newextent-40)){
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+    analogWrite(PWM3,ANALOG/2);
+  }
+  else if(feedback3 > (newextent+40)){
+    digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+    analogWrite(PWM3,ANALOG/2);
+  }
+  else if(feedback3 < (newextent-20)){
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+    analogWrite(PWM3,ANALOG/2);
+  }
+  else if(feedback3 > (newextent+20)){
+     digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+    analogWrite(PWM3,ANALOG/2);
+  }
+  else{
+    analogWrite(PWM3,0);
+    return 1;
+  } 
+  return 0;  
+}
+
+/*****************************************************************************
+ * Function name:     _actuator4
+ * 
+ * Descriptions:      Funktion zur Ansterung des ersten Actuators 
+ *                    Wenn Positin erreicht gibt funktion 1 zurück
+ *                    sonst eine 0
+ * 
+ * Stecker:           Actuator 3
+ *                    5V      = Pin 1
+ *                    FB3     = Pin 2
+ *                    OUT1    = Pin 3
+ *                    OUT2    = Pin 4
+ *                    GND     = Pin 5
+ *                    
+ * Output pins:       D5  = PWM 4
+ *                    D22 = direction OUT 
+ *                    D23 = direction IN 
+ *                      
+ * Input pins:        A4  = Sen2B
+ *                    A8 = FB4
+ *****************************************************************************/
+uint8_t _actuator4(uint16_t extent){
+
+  uint16_t newextent;
+  
+  feedback4 = analogRead(FB4);
+  newextent = extent +130;    
+  //Serial.println(feedback3);
+  feedback4 = feedback4 +130;
+
+  if(feedback4 > (newextent+130)){
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+    analogWrite(PWM4,ANALOG);
+  }
+  else if(feedback4 < (newextent-130)){
+    digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+    analogWrite(PWM4,ANALOG);
+  }
+  else if(feedback4 > (newextent+40)){
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+    analogWrite(PWM4,ANALOG/2);
+  }
+  else if(feedback4 < (newextent-40)){
+    digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+    analogWrite(PWM4,ANALOG/2);
+  }
+  else if(feedback4 > (newextent+20)){
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+    analogWrite(PWM4,ANALOG/2);
+  }
+  else if(feedback4 < (newextent-20)){
+     digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+    analogWrite(PWM4,ANALOG/2);
+  }
+  else{
+    analogWrite(PWM4,0);
     return 1;
   }   
   return 0;  

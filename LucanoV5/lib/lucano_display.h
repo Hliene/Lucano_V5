@@ -4,10 +4,6 @@
 #include <Arduino.h>
 
 
-
-
-
-
 //    Prototypes 
 void init_Display(void);
 void Display_Page(const char* page);

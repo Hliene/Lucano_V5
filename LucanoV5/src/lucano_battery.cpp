@@ -18,8 +18,7 @@ uint16_t old_baterie_value = 100;
  *****************************************************************************/
 void init_battery(void){
 
-  //Bateriespanung
-  pinMode(BAT_IN,INPUT);
+  pinMode(BAT_IN,INPUT);                                                    //analoge input for the batterievalue
 
 }
 /*****************************************************************************
@@ -47,7 +46,7 @@ uint16_t read_battery(void){
         
     bat_val_return = bat_val_return *10;                                    //edit the baterie value
 
-    return bat_val_return;
+    return bat_val_return;                                                  //return the batterievalue
 }
 
 /*****************************************************************************
