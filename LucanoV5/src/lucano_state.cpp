@@ -48,7 +48,8 @@ uint16_t idle(void)
     digitalWrite(GREENLED,HIGH);
     digitalWrite(REDLED,LOW);
     
-    _actuator(100);
+    //_actuator(100);
+    //Serial.println("idle");
 
  // <<<<<<<<<<<<<<<<<<<< Adjust the declimbing height>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(plus_buttom() & (delimbing_height < MAX_DELCLIMBING_HEIGT))
@@ -86,6 +87,15 @@ uint16_t idle(void)
     if(attach_to_tree_buttom())
         return ATTACH_TO_TREE;    
 
+    if(_actuator(100) && start_buttom()){
+        _drive_STOP();                                                          //Anhalten
+        delay(500);                                                             //Eine halbe Sekunde warten
+        Display_Page("2");                                                      //Ausgabe der zweiten Seite
+        Display_delclimbing_height(delimbing_height,"2");                       //Ausgabe der geastenten höhe
+        //Display_working_time(sekunde ,minute, "2");                             //Ausgabe der entastugszeit
+        return FINISHED; 
+    }
+    
     delay(10);
 
     return IDLE;
@@ -101,10 +111,10 @@ uint16_t idle(void)
 uint16_t attach_to_tree(void){
   
 // Actuatoren auf 0 Grad setzten 
-    if(_actuator(512))                 //if(_actuator(512))
+    if(_actuator(512))                  //if(_actuator(512))
         _attach_to_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
-    else 
-        _drive_STOP();                  //Sonst nicht fahren
+    //else 
+       // _drive_STOP();                  //Sonst nicht fahren
 
     delay(20);
 
@@ -114,10 +124,39 @@ uint16_t attach_to_tree(void){
 
     if(digitalRead(ATTACH_TREE))        //Wenn Taster gedrückt dann State weiter durchlaufen
         return ATTACH_TO_TREE;
+     
+
+    _drive_STOP();                  //Sonst nicht fahren
+    return IDLE;                        //Gehe zurück in State IDLE
+}
+
+/*****************************************************************************
+ * Function name:     remove_from_tree
+ * 
+ * Descriptions:      Funktion um den vom Baum zu nehmen
+ * 
+ *                    
+ *****************************************************************************/
+uint16_t remove_from_tree(void){
+  
+// Actuatoren auf 0 Grad setzten 
+    if(_actuator(512))                 //if(_actuator(512))
+        _remove_from_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
+    //else 
+     //   _drive_STOP();                  //Sonst nicht fahren
+
+    delay(20);
+
+
+    if(_battery("1"))                   //Ausgabe der Batteriespannung
+        return BATTERIE_EMPTY;
+
+    if(digitalRead(ATTACH_TREE))        //Wenn Taster gedrückt dann State weiter durchlaufen
+        return REMOVE_FROM_TREE;
     else 
         _drive_STOP();                  //Sonst nicht fahren
 
-    return IDLE;                        //Gehe zurück in State IDLE
+    return FINISHED;                        //Gehe zurück in State IDLE
 }
 
 /*****************************************************************************
@@ -140,34 +179,36 @@ uint16_t hook_fall_protection(void){
  */
 
     //Serial.println("hookFallProtektion");
- // <<<<<<<<<<<<<<<<<<<<Blink green LED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(((hook_fall_counter & BLINK_FREQ) == BLINK_FREQ))
-        digitalWrite(GREENLED,LOW);
-    else 
-        digitalWrite(GREENLED,HIGH);   
+    //if(_actuator(100)){
+    // <<<<<<<<<<<<<<<<<<<<Blink green LED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        if(((hook_fall_counter & BLINK_FREQ) == BLINK_FREQ))
+            digitalWrite(GREENLED,LOW);
+        else 
+            digitalWrite(GREENLED,HIGH);   
 
- //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(_battery("1"))
-        return BATTERIE_EMPTY;
+    //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        if(_battery("1"))
+            return BATTERIE_EMPTY;
 
-//  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(BT_CONNECT){
-        Display_Page("4");
-        page4_text("Attention!","Remote Control","Bluetooth Connected");
-        old_baterie_value = DEFALT_BAT_VAL;
-        return REMOTE_CONTROL;
-    } 
+    //  <<<<<<<<<<<<<<<<<<<< go to next State >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        if(BT_CONNECT){
+            Display_Page("4");
+            page4_text("Attention!","Remote Control","Bluetooth Connected");
+            old_baterie_value = DEFALT_BAT_VAL;
+            return REMOTE_CONTROL;
+        } 
 
- // <<<<<<<<<<<<<<<<<<<<drive the Tree half around>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if(hook_fall_counter){
-        hook_fall_counter = hook_fall_counter - (_drive_UP());
-        delay(20);
-    }
-    else{ 
-        _drive_STOP();       
-        if (ref_column())
-            return READY_TO_START;                    //Go to next state         
-    }   
+    // <<<<<<<<<<<<<<<<<<<<drive the Tree half around>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        if(hook_fall_counter){
+            hook_fall_counter = hook_fall_counter - (_drive_UP());
+            delay(20);
+        }
+        else{ 
+            _drive_STOP();       
+            if (ref_column())
+                return READY_TO_START;                    //Go to next state         
+        }   
+   // }
     return HOOK_FALL_PROTECTION;
 }
 
@@ -352,6 +393,9 @@ uint16_t finished(void){
         delay(200);
         return IDLE;
     }
+
+    if(attach_to_tree_buttom())
+        return REMOVE_FROM_TREE;  
 
     if(BT_CONNECT){
         Display_Page("4");

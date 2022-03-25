@@ -71,9 +71,9 @@ uint16_t _drive_UP(void){
       
   uint16_t current_FR, current_FMR, current_FML;
       
-  digitalWrite(DIR_FL,HIGH);
-  digitalWrite(DIR_FML,HIGH);
-  digitalWrite(DIR_FMR,HIGH);
+  digitalWrite(DIR_FL,LOW);
+  digitalWrite(DIR_FML,LOW);
+  digitalWrite(DIR_FMR,LOW);
   digitalWrite(DIR_FR,HIGH);
 
 
@@ -143,9 +143,9 @@ uint16_t _drive_UP(void){
  *****************************************************************************/
 void _drive_DOWN(void){
   
-  digitalWrite(DIR_FL,LOW);
-  digitalWrite(DIR_FML,LOW);
-  digitalWrite(DIR_FMR,LOW);
+  digitalWrite(DIR_FL,HIGH);
+  digitalWrite(DIR_FML,HIGH);
+  digitalWrite(DIR_FMR,HIGH);
   digitalWrite(DIR_FR,LOW);
       
   analogWrite(PWM_FL,(AntriebSpeed));
@@ -179,14 +179,44 @@ void _drive_DOWN(void){
 void _attach_to_tree(void){
 
     digitalWrite(DIR_FL,LOW);
-    digitalWrite(DIR_FML,LOW);
+    digitalWrite(DIR_FML,HIGH);
     digitalWrite(DIR_FMR,HIGH);
+    digitalWrite(DIR_FR,LOW);
+        
+    analogWrite(PWM_FL,(AntriebSpeed));
+    analogWrite(PWM_FML,(AntriebSpeed));
+    analogWrite(PWM_FMR,(AntriebSpeed));
+    analogWrite(PWM_FR,(AntriebSpeed));
+}
+
+/*****************************************************************************
+ * Function name:     _remove_from_tree(void)
+ * 
+ * Descriptions:      Funktion um den Lucano vom Baum zu nehmen 
+ * 
+
+ *                    
+ * Output pins:       D8  = PWM Finger links
+ *                    D9  = PWM Finger mitte links
+ *                    D10 = PWM Finger mitte rechts
+ *                    D11 = PWM Finger rechts
+ *                    
+ *                    D24 = direction Finger links 
+ *                    D25 = direction Finger mitte links 
+ *                    D26 = direction Finger mitte rechts
+ *                    D27 = direction Finger rechts
+ *****************************************************************************/
+void _remove_from_tree(void){
+
+    digitalWrite(DIR_FL,HIGH);
+    digitalWrite(DIR_FML,LOW);
+    digitalWrite(DIR_FMR,LOW);
     digitalWrite(DIR_FR,HIGH);
         
-    analogWrite(PWM_FL,(AntriebSpeed/2));
-    analogWrite(PWM_FML,(AntriebSpeed/2));
-    analogWrite(PWM_FMR,(AntriebSpeed/2));
-    analogWrite(PWM_FR,(AntriebSpeed/2));
+    analogWrite(PWM_FL,(AntriebSpeed));
+    analogWrite(PWM_FML,(AntriebSpeed));
+    analogWrite(PWM_FMR,(AntriebSpeed));
+    analogWrite(PWM_FR,(AntriebSpeed));
 }
 
 /*****************************************************************************

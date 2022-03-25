@@ -27,7 +27,8 @@
 #define DRIVE_BACK              6
 #define FINISHED                7
 #define REMOTE_CONTROL          9
-#define BATTERIE_EMPTY          10         
+#define BATTERIE_EMPTY          10
+#define REMOVE_FROM_TREE        11         
 
 
 // Defines for states
@@ -40,6 +41,7 @@
 //    Prototypes 
 uint16_t idle(void);
 uint16_t attach_to_tree(void);
+uint16_t remove_from_tree(void);
 uint16_t hook_fall_protection(void);
 uint16_t work(void);
 uint16_t ready_to_start(void);

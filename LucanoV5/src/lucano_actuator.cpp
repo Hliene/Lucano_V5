@@ -84,8 +84,9 @@ void init_actuator(void){
  *****************************************************************************/
 uint8_t _actuator(uint16_t extent){
 
-  if(_actuator1(extent) & _actuator2(1024-extent) & _actuator3(extent) & _actuator4(1024-extent))
-    return 1;
+  if(_actuator2(extent) & _actuator1(1024-extent)) // & _actuator3(extent) & _actuator4(1024-extent))
+    if(_actuator3(extent) & _actuator4(1024-extent))
+      return 1;
 
   return 0;
 }
@@ -258,12 +259,12 @@ uint8_t _actuator3(uint16_t extent){
   if(feedback3 < (newextent-130)){
     digitalWrite(DIRECTION1,LOW);
     digitalWrite(DIRECTION2,HIGH);
-    analogWrite(PWM3,ANALOG);
+    analogWrite(PWM3,ANALOG*0.7);
   }
   else if(feedback3 > (newextent+130)){
     digitalWrite(DIRECTION1,HIGH);
     digitalWrite(DIRECTION2,LOW);
-    analogWrite(PWM3,ANALOG);
+    analogWrite(PWM3,ANALOG*0.7);
   }
   else if(feedback3 < (newextent-40)){
     digitalWrite(DIRECTION1,LOW);
@@ -275,12 +276,12 @@ uint8_t _actuator3(uint16_t extent){
     digitalWrite(DIRECTION2,LOW);
     analogWrite(PWM3,ANALOG/2);
   }
-  else if(feedback3 < (newextent-20)){
+  else if(feedback3 < (newextent-30)){
     digitalWrite(DIRECTION1,LOW);
     digitalWrite(DIRECTION2,HIGH);
     analogWrite(PWM3,ANALOG/2);
   }
-  else if(feedback3 > (newextent+20)){
+  else if(feedback3 > (newextent+30)){
      digitalWrite(DIRECTION1,HIGH);
     digitalWrite(DIRECTION2,LOW);
     analogWrite(PWM3,ANALOG/2);

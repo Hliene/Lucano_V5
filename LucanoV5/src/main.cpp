@@ -100,8 +100,8 @@ void loop() {
         state = finished();
         break;
 
-      case 8:
-        
+      case REMOVE_FROM_TREE:
+        state = remove_from_tree();
         break;  
       
       case REMOTE_CONTROL:
