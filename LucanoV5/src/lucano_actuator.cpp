@@ -1,12 +1,7 @@
 #include "..\lib\lucano_actuator.h"
 
 
-uint16_t feedback1 = 0;
-uint16_t feedback2 = 0;
-uint16_t feedback3 = 0;
-uint16_t feedback4 = 0;
-uint16_t feedback5 = 0;
-uint16_t feedback6 = 0;
+
 
 /*****************************************************************************
  * Function name:     init_actuator
@@ -82,14 +77,127 @@ void init_actuator(void){
  * 
 
  *****************************************************************************/
-uint8_t _actuator(uint16_t extent){
+uint8_t actuator(uint16_t extent){
 
-  if(_actuator2(extent) & _actuator1(1024-extent)) // & _actuator3(extent) & _actuator4(1024-extent))
-    if(_actuator3(extent) & _actuator4(1024-extent))
+  uint16_t newextent, feedback1, feedback2, feedback3, feedback4, mean_feedback;
+
+  newextent = extent + UPPLER_LIMIT;
+
+  //delay(200);
+  feedback1 = (analogRead(FB1) + UPPLER_LIMIT);
+  feedback2 = (analogRead(FB2) + UPPLER_LIMIT);
+  feedback3 = (analogRead(FB3) + UPPLER_LIMIT);
+  feedback4 = (analogRead(FB4) + UPPLER_LIMIT);
+
+  mean_feedback = (feedback1 + feedback2) /2;// + feedback3 + feedback4) / 4;
+/*
+  Serial.print("mean feedback = ");
+  Serial.print(mean_feedback);
+*/
+  if (mean_feedback > newextent){
+   
+    //Serial.print("  up  ");
+
+    digitalWrite(DIRECTION1,HIGH);
+    digitalWrite(DIRECTION2,LOW);
+
+    if(feedback1 < newextent)
+      feedback1 = UPPLER_LIMIT;
+    if(feedback2 < newextent)
+      feedback2 = UPPLER_LIMIT;  
+    if(feedback3 < newextent)
+      feedback3 = UPPLER_LIMIT;
+    if(feedback4 < newextent)
+      feedback4 = UPPLER_LIMIT;  
+  /*  
+    Serial.print("  FB1 = "); 
+    Serial.print(feedback1); 
+    Serial.print("  FB2 = "); 
+    Serial.print(feedback2); 
+    Serial.print("  FB3 = "); 
+    Serial.print(feedback3); 
+    Serial.print("  FB4 = "); 
+    Serial.println(feedback4); 
+
+*/
+    if(_actuator(newextent, feedback1, PWM1) & _actuator(1024-extent, feedback2, PWM2))// & _actuator(extent, feedback3, PWM3) & _actuator(1024-extent, feedback4, PWM4))//& _actuator(extent, feedback3, PWM3)
       return 1;
+    }
+    else if (mean_feedback < newextent){
 
+  //  Serial.print("  down  ");
+
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,HIGH);
+
+    if(feedback1 > newextent)
+      feedback1 = UPPLER_LIMIT;
+    if(feedback2 > newextent)
+      feedback2 = UPPLER_LIMIT;  
+    if(feedback3 > newextent)
+      feedback3 = UPPLER_LIMIT;
+    if(feedback4 > newextent)
+      feedback4 = UPPLER_LIMIT;  
+
+ /*   Serial.print("  FB1 = "); 
+    Serial.print(feedback1); 
+    Serial.print("  FB2 = "); 
+    Serial.print(feedback2); 
+    Serial.print("  FB3 = "); 
+    Serial.print(feedback3); 
+    Serial.print("  FB4 = "); 
+    Serial.println(feedback4);
+*/
+    if(_actuator(newextent, feedback1, PWM1) & _actuator(1024-extent, feedback2, PWM2))// & _actuator(extent, feedback3, PWM3) & _actuator(1024-extent, feedback4, PWM4))//& _actuator(extent, feedback3, PWM3)
+      return 1;
+  }
+  else{
+    digitalWrite(DIRECTION1,LOW);
+    digitalWrite(DIRECTION2,LOW);
+  }
   return 0;
 }
+
+/*****************************************************************************
+ * Function name:     _actuator
+ * 
+ * Descriptions:      Funktion zur Ansterung der Actuatoren
+ *                    Wenn Positin erreicht gibt funktion 1 zurück
+ *                    sonst eine 0
+ * 
+ * Stecker:           Actuator 1 - 6
+ *                    5V      = Pin 1
+ *                    FB1     = Pin 2
+ *                    OUTP    = Pin 3
+ *                    OUTN    = Pin 4
+ *                    GND     = Pin 5
+ * 
+ * Übergabeparamter:  extent    = gewünschte position des Actuators
+ *                    feedback  = aktuelle position des Actuators 
+ *                    pin       = PWM Pin des Actuators
+ *                    
+ *****************************************************************************/
+uint8_t _actuator(uint16_t extent, uint16_t feedback, uint16_t pin){
+
+  if(feedback < (extent - UPPLER_LIMIT))
+    analogWrite(pin,ANALOG);
+  
+  else if(feedback > (extent + UPPLER_LIMIT))
+    analogWrite(pin,ANALOG);
+  
+  else if(feedback < (extent - LOWER_LIMIT))
+    analogWrite(pin,ANALOG/2);
+  
+  else if(feedback > (extent + LOWER_LIMIT))
+    analogWrite(pin,ANALOG/2);
+  
+  else{
+    analogWrite(pin,0);
+    return 1;
+  } 
+  return 0;  
+}
+
 
 /*****************************************************************************
  * Function name:     _actuator1
@@ -112,52 +220,27 @@ uint8_t _actuator(uint16_t extent){
  * Input pins:        A0  = Sen1A
  *                    A11 = FB1
  *****************************************************************************/
-uint8_t _actuator1(uint16_t extent){
+/*uint8_t _actuator1(uint16_t extent){
 
-   uint16_t newextent;
-   
-  feedback1 = analogRead(FB1);
-  newextent = extent +130;  
-  //Serial.println(feedback1);
-  feedback1 = feedback1 +130;
+  if(feedback1 < (extent - UPPLER_LIMIT))
+    analogWrite(PWM1,ANALOG);
   
-  if(feedback1 < (newextent-130)){
-    digitalWrite(DIRECTION1,LOW);
-    digitalWrite(DIRECTION2,HIGH);
+  else if(feedback1 > (extent + UPPLER_LIMIT))
     analogWrite(PWM1,ANALOG);
-  }
-  else if(feedback1 > (newextent+130)){
-    digitalWrite(DIRECTION1,HIGH);
-    digitalWrite(DIRECTION2,LOW);
-    analogWrite(PWM1,ANALOG);
-  }
-  else if(feedback1 < (newextent-40)){
-    digitalWrite(DIRECTION1,LOW);
-    digitalWrite(DIRECTION2,HIGH);
+  
+  else if(feedback1 < (extent - LOWER_LIMIT))
     analogWrite(PWM1,ANALOG/2);
-  }
-  else if(feedback1 > (newextent+40)){
-    digitalWrite(DIRECTION1,HIGH);
-    digitalWrite(DIRECTION2,LOW);
+  
+  else if(feedback1 > (extent + LOWER_LIMIT))
     analogWrite(PWM1,ANALOG/2);
-  }
-  else if(feedback1 < (newextent-20)){
-    digitalWrite(DIRECTION1,LOW);
-    digitalWrite(DIRECTION2,HIGH);
-    analogWrite(PWM1,ANALOG/2);
-  }
-  else if(feedback1 > (newextent+20)){
-     digitalWrite(DIRECTION1,HIGH);
-    digitalWrite(DIRECTION2,LOW);
-    analogWrite(PWM1,ANALOG/2);
-  }
+  
   else{
     analogWrite(PWM1,0);
     return 1;
   } 
   return 0;  
 }
-
+*/
 /*****************************************************************************
  * Function name:     _actuator2
  * 
@@ -179,52 +262,27 @@ uint8_t _actuator1(uint16_t extent){
  * Input pins:        A1  = Sen1B
  *                    A10 = FB1
  *****************************************************************************/
-uint8_t _actuator2(uint16_t extent){
+/*uint8_t _actuator2(uint16_t extent){
 
-  uint16_t newextent;
+  if(feedback2 > (extent + UPPLER_LIMIT))
+    analogWrite(PWM2,ANALOG);
   
-  feedback2 = analogRead(FB2);
-  newextent = extent +130;    
-  //Serial.println(feedback2);
-  feedback2 = feedback2 +130;
+  else if(feedback2 < (extent - UPPLER_LIMIT))
+    analogWrite(PWM2,ANALOG);
+  
+  else if(feedback2 > (extent + LOWER_LIMIT))
+    analogWrite(PWM2,ANALOG/2);
+  
+  else if(feedback2 < (extent - LOWER_LIMIT))
+    analogWrite(PWM2,ANALOG/2);
 
-  if(feedback2 > (newextent+130)){
-    digitalWrite(DIRECTION1,LOW);
-    digitalWrite(DIRECTION2,HIGH);
-    analogWrite(PWM2,ANALOG);
-  }
-  else if(feedback2 < (newextent-130)){
-    digitalWrite(DIRECTION1,HIGH);
-    digitalWrite(DIRECTION2,LOW);
-    analogWrite(PWM2,ANALOG);
-  }
-  else if(feedback2 > (newextent+40)){
-    digitalWrite(DIRECTION1,LOW);
-    digitalWrite(DIRECTION2,HIGH);
-    analogWrite(PWM2,ANALOG/2);
-  }
-  else if(feedback2 < (newextent-40)){
-    digitalWrite(DIRECTION1,HIGH);
-    digitalWrite(DIRECTION2,LOW);
-    analogWrite(PWM2,ANALOG/2);
-  }
-  else if(feedback2 > (newextent+20)){
-    digitalWrite(DIRECTION1,LOW);
-    digitalWrite(DIRECTION2,HIGH);
-    analogWrite(PWM2,ANALOG/2);
-  }
-  else if(feedback2 < (newextent-20)){
-     digitalWrite(DIRECTION1,HIGH);
-    digitalWrite(DIRECTION2,LOW);
-    analogWrite(PWM2,ANALOG/2);
-  }
   else{
     analogWrite(PWM2,0);
     return 1;
   }   
   return 0;  
 }
-
+*/
 
 /*****************************************************************************
  * Function name:     _actuator3
@@ -247,7 +305,7 @@ uint8_t _actuator2(uint16_t extent){
  * Input pins:        A2  = Sen2A
  *                    A9 = FB3
  *****************************************************************************/
-uint8_t _actuator3(uint16_t extent){
+/*uint8_t _actuator3(uint16_t extent){
 
    uint16_t newextent;
    
@@ -292,7 +350,7 @@ uint8_t _actuator3(uint16_t extent){
   } 
   return 0;  
 }
-
+*/
 /*****************************************************************************
  * Function name:     _actuator4
  * 
@@ -314,7 +372,7 @@ uint8_t _actuator3(uint16_t extent){
  * Input pins:        A4  = Sen2B
  *                    A8 = FB4
  *****************************************************************************/
-uint8_t _actuator4(uint16_t extent){
+/*uint8_t _actuator4(uint16_t extent){
 
   uint16_t newextent;
   
@@ -359,3 +417,4 @@ uint8_t _actuator4(uint16_t extent){
   }   
   return 0;  
 }
+*/

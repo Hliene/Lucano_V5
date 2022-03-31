@@ -92,14 +92,14 @@ void init_I2C_lidar(void){
   Wire.begin();               // Called in previous function.
   Wire.setClock(1000000);      // Set I2C bus speed to 'Fast plus' if
 
-  printf( "System reset: ");
+ // printf( "System reset: ");
   if( tfmP.sendCommand( SOFT_RESET, 0))
   {
    // printf( "passed.\r\n");
   }
   else tfmP.printReply();  // This response and 'printStatus()' are for
 
-  printf( "Firmware version: ");
+  //printf( "Firmware version: ");
     if( tfmP.sendCommand( GET_FIRMWARE_VERSION, 0))
     {
      //   printf( "%1u.",  tfmP.version[ 0]); // print three single numbers
@@ -108,7 +108,7 @@ void init_I2C_lidar(void){
     }
     else tfmP.printReply();
 
-  printf( "Data-Frame rate: ");
+  //printf( "Data-Frame rate: ");
     if( tfmP.sendCommand( SET_FRAME_RATE, FRAME_500))
     {
        // printf( "%2uHz.\n", FRAME_1000);

@@ -76,9 +76,7 @@ uint16_t _drive_UP(void){
   digitalWrite(DIR_FMR,LOW);
   digitalWrite(DIR_FR,HIGH);
 
-
   //Serial.println(counter_up);
-
   current_FR = analogRead(CURRENT_FR);
   current_FMR = analogRead(CURRENT_FMR);
   current_FML = analogRead(CURRENT_FML);

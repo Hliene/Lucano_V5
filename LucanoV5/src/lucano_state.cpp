@@ -41,7 +41,7 @@ uint16_t height_strength = 0;
  *****************************************************************************/
 uint16_t idle(void)
 {
-    //Serial.println("IDLE");
+   // Serial.println("IDLE");
     //retract_column();                 //Fals die Schere ausgefahren ist erst einfahren
 
     _drive_STOP();                      // Raeder muessen stehen bleiben 
@@ -87,7 +87,7 @@ uint16_t idle(void)
     if(attach_to_tree_buttom())
         return ATTACH_TO_TREE;    
 
-    if(_actuator(100) && start_buttom()){
+    if(actuator(512) && start_buttom()){
         _drive_STOP();                                                          //Anhalten
         delay(500);                                                             //Eine halbe Sekunde warten
         Display_Page("2");                                                      //Ausgabe der zweiten Seite
@@ -111,11 +111,11 @@ uint16_t idle(void)
 uint16_t attach_to_tree(void){
   
 // Actuatoren auf 0 Grad setzten 
-    if(_actuator(512))                  //if(_actuator(512))
-        _attach_to_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
+    if(actuator(20))                  //if(_actuator(512))
+       _attach_to_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
     //else 
        // _drive_STOP();                  //Sonst nicht fahren
-
+ 
     delay(20);
 
 
@@ -140,7 +140,7 @@ uint16_t attach_to_tree(void){
 uint16_t remove_from_tree(void){
   
 // Actuatoren auf 0 Grad setzten 
-    if(_actuator(512))                 //if(_actuator(512))
+    if(actuator(20))                 //if(_actuator(512))
         _remove_from_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
     //else 
      //   _drive_STOP();                  //Sonst nicht fahren
@@ -306,6 +306,8 @@ uint16_t work(void){
  *****************************************************************************/
 uint16_t remote_control(void){
 
+    uint16_t BT_in;
+
     digitalWrite(REDLED,HIGH);
     digitalWrite(GREENLED,HIGH);
 
@@ -313,7 +315,15 @@ uint16_t remote_control(void){
 
     hook_fall_counter = getTFminiDataI2C();
 
+    BT_in = _read_Bluetooth();
 
+    if(BT_in == DRIVE_UP)
+        _drive_UP();
+    else if(BT_in == DRIVE_DOWN)
+        _drive_DOWN();   
+    else if(BT_in == DRIVE_STOP)
+        _drive_STOP(); 
+    
 
     if(BT_CONNECT){
         return REMOTE_CONTROL;

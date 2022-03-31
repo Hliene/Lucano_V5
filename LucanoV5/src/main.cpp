@@ -15,10 +15,10 @@
 
 
 
-#define CUSTOM_SETTINGS
-#define INCLUDE_GAMEPAD_MODULE
+//#define CUSTOM_SETTINGS
+//#define INCLUDE_GAMEPAD_MODULE
 //#include <evive.h>
-#include "..\lib\Dabble.h"
+//#include "..\lib\Dabble.h"
 
 
 
@@ -44,7 +44,7 @@ uint16_t state = 0;
 
 void setup() {
 
-  Dabble.begin(9600);  
+  //Dabble.begin(9600);  
   init_ISR_2();
   init_actuator();
   init_drive();
@@ -60,7 +60,7 @@ void setup() {
   state = IDLE;
   init_lidar1();
   init_I2C_lidar();
- 
+  init_bluetooth();
 }
 int i;
 
@@ -69,6 +69,8 @@ void loop() {
 //Dabble.processInput();
 
 //delay(1);
+
+//Serial.println(state);
   
   switch(state)
     {
@@ -105,7 +107,7 @@ void loop() {
         break;  
       
       case REMOTE_CONTROL:
-        Dabble.processInput();
+       /* Dabble.processInput();
 
         if(GamePad.isDownPressed()){ 
           _drive_DOWN();
@@ -134,7 +136,7 @@ void loop() {
         } 
 
         //analogWrite(PWM_ASN,0);
-        
+        */
         state = remote_control();
         break;
 
@@ -142,6 +144,7 @@ void loop() {
         Serial.println("batterie");
         Display_Page("4");
         page4_text("Attention!","EMPTY BATTERIE","REMOTE CONTROL");
+        
         state = REMOTE_CONTROL;
         break; 
       
