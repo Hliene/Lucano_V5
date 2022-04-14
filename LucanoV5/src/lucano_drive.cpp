@@ -77,9 +77,16 @@ uint16_t _drive_UP(void){
   digitalWrite(DIR_FR,HIGH);
 
   //Serial.println(counter_up);
-  current_FR = analogRead(CURRENT_FR);
+  current_FR = analogRead(CURRENT_FL);
   current_FMR = analogRead(CURRENT_FMR);
   current_FML = analogRead(CURRENT_FML);
+
+  Serial.print("FR: ");
+  Serial.print(current_FR);
+  Serial.print("  FMR: ");
+  Serial.print(current_FMR);
+  Serial.print("  FML: ");
+  Serial.println(current_FML);
   
   if(ERROR_FR){
     delay(50);
@@ -88,8 +95,8 @@ uint16_t _drive_UP(void){
       digitalWrite(SUMMER,HIGH);
       delay(200);
       _drive_DOWN();
-      analogWrite(PWM_FMR,(AntriebSpeed/2));
-      analogWrite(PWM_FR,(AntriebSpeed/2));
+      analogWrite(PWM_FML,(AntriebSpeed/2));
+      analogWrite(PWM_FL,(AntriebSpeed/2));
       delay(2000);
       _drive_STOP();
       digitalWrite(SUMMER,LOW);
@@ -97,11 +104,12 @@ uint16_t _drive_UP(void){
       return 0;
     }   
   }
-  else if(current_FR > (current_FMR +80) | current_FR > (current_FML +80)){
+  else if((current_FMR < 100) | (current_FML < 100)){//(current_FR > (current_FMR +10) | current_FR > (current_FML +10)){
     analogWrite(PWM_FML,(AntriebSpeed /2));
     analogWrite(PWM_FL,(AntriebSpeed /2));
-    analogWrite(PWM_FR,(AntriebSpeed));
+    analogWrite(PWM_FR,(AntriebSpeed ));
     analogWrite(PWM_FMR,(AntriebSpeed));
+    //Serial.println("over current");
     return 1;
     //counter_up = counter_up +1;
   }
@@ -110,9 +118,9 @@ uint16_t _drive_UP(void){
     delay(10);
     analogWrite(PWM_FMR,AntriebSpeed);
     delay(10);
-    analogWrite(PWM_FML,AntriebSpeed);
+    analogWrite(PWM_FML,AntriebSpeed-20);
     delay(10);
-    analogWrite(PWM_FL,AntriebSpeed);
+    analogWrite(PWM_FL,AntriebSpeed-20);
     if(counter_up>3)
       counter_up = counter_up/2;   
   }
@@ -150,9 +158,9 @@ void _drive_DOWN(void){
   delay(50);
   analogWrite(PWM_FML,(AntriebSpeed));
   delay(50);
-  analogWrite(PWM_FMR,(AntriebSpeed-10));
+  analogWrite(PWM_FMR,(AntriebSpeed -100));
   delay(50);
-  analogWrite(PWM_FR,(AntriebSpeed-10));
+  analogWrite(PWM_FR,(AntriebSpeed -100));
 }
 
 /*****************************************************************************

@@ -83,72 +83,47 @@ uint8_t actuator(uint16_t extent){
 
   newextent = extent + UPPLER_LIMIT;
 
-  //delay(200);
+  delay(10);
   feedback1 = (analogRead(FB1) + UPPLER_LIMIT);
-  feedback2 = (analogRead(FB2) + UPPLER_LIMIT);
-  feedback3 = (analogRead(FB3) + UPPLER_LIMIT);
+  feedback2 = ((1024 - analogRead(FB2)) + UPPLER_LIMIT);
+  feedback3 = ((1024 - analogRead(FB3)) + UPPLER_LIMIT);
   feedback4 = (analogRead(FB4) + UPPLER_LIMIT);
 
-  mean_feedback = (feedback1 + feedback2) /2;// + feedback3 + feedback4) / 4;
-/*
-  Serial.print("mean feedback = ");
-  Serial.print(mean_feedback);
-*/
-  if (mean_feedback > newextent){
-   
-    //Serial.print("  up  ");
+  mean_feedback = (feedback1 + feedback2 + feedback3 + feedback4) / 4;
 
+  if (mean_feedback > newextent){
+  
     digitalWrite(DIRECTION1,HIGH);
     digitalWrite(DIRECTION2,LOW);
 
     if(feedback1 < newextent)
-      feedback1 = UPPLER_LIMIT;
+      feedback1 = newextent;
     if(feedback2 < newextent)
-      feedback2 = UPPLER_LIMIT;  
+      feedback2 = newextent;  
     if(feedback3 < newextent)
-      feedback3 = UPPLER_LIMIT;
+      feedback3 = newextent;
     if(feedback4 < newextent)
-      feedback4 = UPPLER_LIMIT;  
-  /*  
-    Serial.print("  FB1 = "); 
-    Serial.print(feedback1); 
-    Serial.print("  FB2 = "); 
-    Serial.print(feedback2); 
-    Serial.print("  FB3 = "); 
-    Serial.print(feedback3); 
-    Serial.print("  FB4 = "); 
-    Serial.println(feedback4); 
-
-*/
-    if(_actuator(newextent, feedback1, PWM1) & _actuator(1024-extent, feedback2, PWM2))// & _actuator(extent, feedback3, PWM3) & _actuator(1024-extent, feedback4, PWM4))//& _actuator(extent, feedback3, PWM3)
+      feedback4 = (newextent);  
+      
+    if(_actuator(newextent, feedback1, PWM1) & _actuator(newextent, feedback2, PWM2) & _actuator(newextent, feedback3, PWM3) & _actuator(newextent, feedback4, PWM4))//& _actuator(extent, feedback3, PWM3)
       return 1;
     }
     else if (mean_feedback < newextent){
 
-  //  Serial.print("  down  ");
 
     digitalWrite(DIRECTION1,LOW);
     digitalWrite(DIRECTION2,HIGH);
 
     if(feedback1 > newextent)
-      feedback1 = UPPLER_LIMIT;
+      feedback1 = newextent;
     if(feedback2 > newextent)
-      feedback2 = UPPLER_LIMIT;  
+      feedback2 = newextent;  
     if(feedback3 > newextent)
-      feedback3 = UPPLER_LIMIT;
+      feedback3 = newextent;
     if(feedback4 > newextent)
-      feedback4 = UPPLER_LIMIT;  
+      feedback4 = newextent;  
 
- /*   Serial.print("  FB1 = "); 
-    Serial.print(feedback1); 
-    Serial.print("  FB2 = "); 
-    Serial.print(feedback2); 
-    Serial.print("  FB3 = "); 
-    Serial.print(feedback3); 
-    Serial.print("  FB4 = "); 
-    Serial.println(feedback4);
-*/
-    if(_actuator(newextent, feedback1, PWM1) & _actuator(1024-extent, feedback2, PWM2))// & _actuator(extent, feedback3, PWM3) & _actuator(1024-extent, feedback4, PWM4))//& _actuator(extent, feedback3, PWM3)
+    if(_actuator(newextent, feedback1, PWM1) & _actuator(newextent, feedback2, PWM2) &_actuator(newextent, feedback3, PWM3) & _actuator(newextent, feedback4, PWM4))//& _actuator(extent, feedback3, PWM3)
       return 1;
   }
   else{
@@ -185,11 +160,15 @@ uint8_t _actuator(uint16_t extent, uint16_t feedback, uint16_t pin){
   else if(feedback > (extent + UPPLER_LIMIT))
     analogWrite(pin,ANALOG);
   
-  else if(feedback < (extent - LOWER_LIMIT))
-    analogWrite(pin,ANALOG/2);
-  
-  else if(feedback > (extent + LOWER_LIMIT))
-    analogWrite(pin,ANALOG/2);
+  else if(feedback < (extent - LOWER_LIMIT)){
+    analogWrite(pin,ANALOG/3);
+    return 1;
+  }
+
+  else if(feedback > (extent + LOWER_LIMIT)){
+    analogWrite(pin,ANALOG/3);
+    return 1;
+  }
   
   else{
     analogWrite(pin,0);

@@ -111,9 +111,12 @@ uint16_t idle(void)
 uint16_t attach_to_tree(void){
   
 // Actuatoren auf 0 Grad setzten 
-    if(actuator(20))                  //if(_actuator(512))
+    if(actuator(50)) {                 //if(_actuator(512))
        _attach_to_tree();              // Wenn Actuatoren auf 0 Grad Räder bewegen  
-    //else 
+        Serial.println("da");
+    }
+    else 
+        Serial.println("nicht da");
        // _drive_STOP();                  //Sonst nicht fahren
  
     delay(20);

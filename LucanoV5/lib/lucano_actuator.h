@@ -13,7 +13,7 @@
 #define PWM5        6
 #define PWM6        7
 
-#define ANALOG      120
+#define ANALOG      160
 
 #define FB1         A11
 #define FB2         A10
@@ -29,8 +29,8 @@
 #define SEN3A       A4
 #define SEN3B       A5
 
-#define UPPLER_LIMIT    130
-#define LOWER_LIMIT     40
+#define UPPLER_LIMIT    100
+#define LOWER_LIMIT     50
 
 
 //Prototypes

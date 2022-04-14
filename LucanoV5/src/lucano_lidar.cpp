@@ -135,7 +135,7 @@ int getTFminiDataI2C(void) {
     tfmP.getData( tfDist, tfFlux, tfTemp); // Get a frame of data
 
     if( tfmP.status == TFMP_READY)         // If no error...
-      return (tfDist *10);     
+      return (tfDist *20);     
     else
     {
         tfmP.printFrame();                 // Display error and data frame
