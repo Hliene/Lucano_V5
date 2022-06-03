@@ -42,7 +42,7 @@ uint16_t _read_Bluetooth(void){
             return DRIVE_STOP;
         }
     }
-    return 0;
+    //return 0;
 }    
 
 

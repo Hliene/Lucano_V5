@@ -1,5 +1,5 @@
 #include "..\lib\lucano_lidar.h"
-#include <TFMPI2C.h>  // TFMini-Plus I2C Library v1.7.2
+#include <TFMPI2C.h>       //  TFMini-Plus I2C library header
 #include <Wire.h>     // Arduino standard I2C/Two-Wire Library
 #include <Arduino.h>
 
@@ -87,7 +87,7 @@ void getTF_High_Data(uint16_t* distance, uint16_t* strength) {
  *****************************************************************************/
 void init_I2C_lidar(void){
   
-  tfmP.recoverI2CBus();
+  //tfmP.recoverI2CBus();
 
   Wire.begin();               // Called in previous function.
   Wire.setClock(1000000);      // Set I2C bus speed to 'Fast plus' if
@@ -141,7 +141,7 @@ int getTFminiDataI2C(void) {
         tfmP.printFrame();                 // Display error and data frame
         if( tfmP.status == TFMP_I2CWRITE)  // If I2C error...
         {
-            tfmP.recoverI2CBus();          // recover hung bus.
+            //tfmP.recoverI2CBus();          // recover hung bus.
         }
     }
 return 0;

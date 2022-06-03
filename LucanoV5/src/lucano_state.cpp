@@ -297,6 +297,8 @@ uint16_t work(void){
     return WORK;
 }
 
+uint16_t BT_in;
+
 /*****************************************************************************
  * Function name:     remote_control
  * 
@@ -309,12 +311,13 @@ uint16_t work(void){
  *****************************************************************************/
 uint16_t remote_control(void){
 
-    uint16_t BT_in;
+    
 
     digitalWrite(REDLED,HIGH);
     digitalWrite(GREENLED,HIGH);
 
     _battery("4");
+    Serial.println(BT_in);
 
     hook_fall_counter = getTFminiDataI2C();
 
@@ -327,6 +330,7 @@ uint16_t remote_control(void){
     else if(BT_in == DRIVE_STOP)
         _drive_STOP(); 
     
+  //  delay(100);
 
     if(BT_CONNECT){
         return REMOTE_CONTROL;
@@ -363,12 +367,12 @@ uint16_t drive_back(void){
     else{
         _drive_STOP();                                                          //Anhalten
         delay(500);                                                             //Eine halbe Sekunde warten
-        Display_Page("2");                                                      //Ausgabe der zweiten Seite
-        Display_delclimbing_height(delimbing_height,"2");                       //Ausgabe der geastenten höhe
-        Display_working_time(sekunde ,minute, "2");                             //Ausgabe der entastugszeit
         delimbing_height = delimbing_height + DIFF_HEIGT_SISSOR;                //Die Höhenanpassung wirder rausnehmen
         delimbing_height = delimbing_height / cm2m;                             //wieder von m auf cm umrechen damit die höhe im idle status wieder neu eingestellt werden kann
         old_baterie_value = DEFALT_BAT_VAL;                                     //Alten Batteriewert neu setzten damit auf der neuen Seite der Batteriestand wieder ausgegeben wird
+        Display_Page("2");                                                      //Ausgabe der zweiten Seite
+        Display_delclimbing_height(delimbing_height,"2");                       //Ausgabe der geastenten höhe
+        Display_working_time(sekunde ,minute, "2");                             //Ausgabe der entastugszeit
         return FINISHED;
     }
 

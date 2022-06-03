@@ -7,7 +7,7 @@
 #define PWM_FL        11                //PWM Finger Links
 #define PWM_FML       9                 //PWM Finger Mitte Links
 #define PWM_FMR       10                //PWM Finger Mitte Rechts
-#define PWM_FR        8                 //PWM Finger Rechts
+#define PWM_FR        8                //PWM Finger Rechts
 
 #define DIR_FL        24              //direction Finger Links
 #define DIR_FML       25              //direction Finger Mitte Links

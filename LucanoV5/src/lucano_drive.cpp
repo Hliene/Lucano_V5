@@ -104,9 +104,9 @@ uint16_t _drive_UP(void){
       return 0;
     }   
   }
-  else if((current_FMR < 100) | (current_FML < 100)){//(current_FR > (current_FMR +10) | current_FR > (current_FML +10)){
-    analogWrite(PWM_FML,(AntriebSpeed /2));
-    analogWrite(PWM_FL,(AntriebSpeed /2));
+  else if((current_FMR < 50) | (current_FML < 50)){//(current_FR > (current_FMR +10) | current_FR > (current_FML +10)){
+    analogWrite(PWM_FML,120);
+    analogWrite(PWM_FL,120);
     analogWrite(PWM_FR,(AntriebSpeed ));
     analogWrite(PWM_FMR,(AntriebSpeed));
     //Serial.println("over current");
@@ -118,9 +118,9 @@ uint16_t _drive_UP(void){
     delay(10);
     analogWrite(PWM_FMR,AntriebSpeed);
     delay(10);
-    analogWrite(PWM_FML,AntriebSpeed-20);
+    analogWrite(PWM_FML,AntriebSpeed-40);
     delay(10);
-    analogWrite(PWM_FL,AntriebSpeed-20);
+    analogWrite(PWM_FL,AntriebSpeed-40);
     if(counter_up>3)
       counter_up = counter_up/2;   
   }
