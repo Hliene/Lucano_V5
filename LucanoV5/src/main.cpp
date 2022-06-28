@@ -46,6 +46,8 @@ void setup() {
 
   //Dabble.begin(9600);  
   init_ISR_2();
+  init_Display();
+  Display_Page("0");
   init_actuator();
   init_drive();
   init_battery();
@@ -53,14 +55,13 @@ void setup() {
   init_lucano();
   init_Buttons();
   init_lifting_column();
-  init_Display();
-  Display_Page("0");
-  delay(1000);
-  Display_Page("1");
-  state = IDLE;
   init_lidar1();
   init_I2C_lidar();
   init_bluetooth();
+  //delay(1000);
+  state = IDLE;
+  Display_Page("1");
+  Display_baterie_value(0,"1");
 }
 int i;
 
@@ -107,36 +108,6 @@ void loop() {
         break;  
       
       case REMOTE_CONTROL:
-       /* Dabble.processInput();
-
-        if(GamePad.isDownPressed()){ 
-          _drive_DOWN();
-          Serial.println("Drive DOWN");    
-          if (ENDSTOP_HS == 0){                           // Wenn sich die Hubsäule während der Fahrt aus der endlage löst
-            analogWrite(PWM_ASN,100);
-          }
-          else 
-            analogWrite(PWM_ASN,0);
-
-        }
-        else if(GamePad.isUpPressed()){
-          _drive_UP();
-          Serial.println("Drive UP"); 
-          if (ENDSTOP_HS == 0){                           // Wenn sich die Hubsäule während der Fahrt aus der endlage löst
-            analogWrite(PWM_ASN,100);
-          }
-          else 
-            analogWrite(PWM_ASN,0);
-
-        }
-        else{
-          _drive_STOP();
-          analogWrite(PWM_ASP,0);
-          analogWrite(PWM_ASN,0);
-        } 
-
-        //analogWrite(PWM_ASN,0);
-        */
         state = remote_control();
         break;
 
