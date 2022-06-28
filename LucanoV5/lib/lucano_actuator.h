@@ -29,8 +29,8 @@
 #define SEN3A       A4
 #define SEN3B       A5
 
-#define UPPLER_LIMIT    100
-#define LOWER_LIMIT     50
+#define UPPLER_LIMIT    120
+#define LOWER_LIMIT     120
 
 
 //Prototypes

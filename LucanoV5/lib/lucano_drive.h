@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#define MAX_DRIVE_CURRENT 70 
+
 //      Stecker für Finger Antrieb
 #define PWM_FL        11                //PWM Finger Links
 #define PWM_FML       9                 //PWM Finger Mitte Links
@@ -25,11 +27,11 @@
 #define ERROR_FR    digitalRead(SPARE_FR)     //Fehler Antrieb Finger Links
 
 #define CURRENT_FR    A0
-#define CURRENT_FMR   A1
-#define CURRENT_FML   A2
+#define CURRENT_FMR   A2
+#define CURRENT_FML   A1
 #define CURRENT_FL    A3
 
-#define AntriebSpeed  250             // 0-255 Antriebsgeschwindigkeit der Räder 
+#define AntriebSpeed  255             // 0-255 Antriebsgeschwindigkeit der Räder 
 
 //      Prototypes
 uint16_t _drive_UP(void);

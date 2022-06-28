@@ -9,7 +9,7 @@
 #define BUTTOM_4      31
 #define ATTACH_TREE   53                    //Stecker Spare 2 Pi4 
 
-#define BUTTOM_LOOPs  4096
+#define BUTTOM_LOOPs  2048
 
 
 

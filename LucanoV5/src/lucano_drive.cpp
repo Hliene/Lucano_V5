@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 uint32_t  counter_up =0;
+uint16_t  max_drive_current = MAX_DRIVE_CURRENT;
 
 /*****************************************************************************
  * Function name:     init_drive
@@ -80,14 +81,15 @@ uint16_t _drive_UP(void){
   current_FR = analogRead(CURRENT_FL);
   current_FMR = analogRead(CURRENT_FMR);
   current_FML = analogRead(CURRENT_FML);
-
+/*
   Serial.print("FR: ");
   Serial.print(current_FR);
   Serial.print("  FMR: ");
   Serial.print(current_FMR);
   Serial.print("  FML: ");
   Serial.println(current_FML);
-  
+  */
+ /*
   if(ERROR_FR){
     delay(50);
     if(ERROR_FR){
@@ -97,34 +99,39 @@ uint16_t _drive_UP(void){
       _drive_DOWN();
       analogWrite(PWM_FML,(AntriebSpeed/2));
       analogWrite(PWM_FL,(AntriebSpeed/2));
-      delay(2000);
+      //delay(2000);
       _drive_STOP();
       digitalWrite(SUMMER,LOW);
       counter_up = 0; 
       return 0;
     }   
-  }
-  else if((current_FMR < 50) | (current_FML < 50)){//(current_FR > (current_FMR +10) | current_FR > (current_FML +10)){
-    analogWrite(PWM_FML,120);
-    analogWrite(PWM_FL,120);
+  }*/
+  if((current_FML < max_drive_current)){                 //(current_FR > //(current_FMR +10) | current_FR > //(current_FML +10)){
+    analogWrite(PWM_FML,AntriebSpeed);
+    analogWrite(PWM_FL,(AntriebSpeed/2 ));
     analogWrite(PWM_FR,(AntriebSpeed ));
     analogWrite(PWM_FMR,(AntriebSpeed));
-    //Serial.println("over current");
+    Serial.println("over current");
+    return 1;
+    //counter_up = counter_up +1;
+  }
+  else if((current_FMR < max_drive_current)){                 //(current_FR > //(current_FMR +10) | current_FR > //(current_FML +10)){
+    analogWrite(PWM_FML,(AntriebSpeed/2 ));
+    analogWrite(PWM_FL,(AntriebSpeed/3 ));
+    analogWrite(PWM_FR,(AntriebSpeed ));
+    analogWrite(PWM_FMR,(AntriebSpeed));
+    Serial.println("over current");
     return 1;
     //counter_up = counter_up +1;
   }
   else{   
     analogWrite(PWM_FR,AntriebSpeed);
-    delay(10);
     analogWrite(PWM_FMR,AntriebSpeed);
-    delay(10);
-    analogWrite(PWM_FML,AntriebSpeed-40);
-    delay(10);
-    analogWrite(PWM_FL,AntriebSpeed-40);
-    if(counter_up>3)
-      counter_up = counter_up/2;   
+    analogWrite(PWM_FML,AntriebSpeed);
+    analogWrite(PWM_FL,AntriebSpeed);
+    return 2; 
   }
-  return 2;
+  return 0;
 }
 
 /*****************************************************************************
@@ -148,19 +155,35 @@ uint16_t _drive_UP(void){
  *                    D27 = direction Finger rechts
  *****************************************************************************/
 void _drive_DOWN(void){
+
+  uint16_t current_FMR, current_FML;
   
   digitalWrite(DIR_FL,HIGH);
   digitalWrite(DIR_FML,HIGH);
   digitalWrite(DIR_FMR,HIGH);
   digitalWrite(DIR_FR,LOW);
+
+  current_FMR = analogRead(CURRENT_FMR);
+  current_FML = analogRead(CURRENT_FML);
       
-  analogWrite(PWM_FL,(AntriebSpeed));
-  delay(50);
-  analogWrite(PWM_FML,(AntriebSpeed));
-  delay(50);
-  analogWrite(PWM_FMR,(AntriebSpeed -100));
-  delay(50);
-  analogWrite(PWM_FR,(AntriebSpeed -100));
+  if((current_FMR < max_drive_current)){                 
+    analogWrite(PWM_FMR,(AntriebSpeed/4 ));
+    analogWrite(PWM_FR,(AntriebSpeed/2 ));
+    analogWrite(PWM_FL,AntriebSpeed);
+    analogWrite(PWM_FML,AntriebSpeed);
+  }
+  if(current_FML < max_drive_current){                 
+    analogWrite(PWM_FMR,(AntriebSpeed/4 ));
+    analogWrite(PWM_FR,(AntriebSpeed/4 ));
+    analogWrite(PWM_FL,AntriebSpeed );
+    analogWrite(PWM_FML,AntriebSpeed);
+  }
+  else{
+    analogWrite(PWM_FL,AntriebSpeed);
+    analogWrite(PWM_FML,AntriebSpeed);
+    analogWrite(PWM_FMR,(AntriebSpeed/4 ));
+    analogWrite(PWM_FR,AntriebSpeed);
+  }
 }
 
 /*****************************************************************************

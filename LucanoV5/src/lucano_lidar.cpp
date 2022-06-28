@@ -87,7 +87,7 @@ void getTF_High_Data(uint16_t* distance, uint16_t* strength) {
  *****************************************************************************/
 void init_I2C_lidar(void){
   
-  //tfmP.recoverI2CBus();
+  tfmP.recoverI2CBus(PIN_WIRE_SDA,PIN_WIRE_SCL);
 
   Wire.begin();               // Called in previous function.
   Wire.setClock(1000000);      // Set I2C bus speed to 'Fast plus' if
@@ -141,7 +141,7 @@ int getTFminiDataI2C(void) {
         tfmP.printFrame();                 // Display error and data frame
         if( tfmP.status == TFMP_I2CWRITE)  // If I2C error...
         {
-            //tfmP.recoverI2CBus();          // recover hung bus.
+            tfmP.recoverI2CBus(PIN_WIRE_SDA,PIN_WIRE_SCL);          // recover hung bus.
         }
     }
 return 0;

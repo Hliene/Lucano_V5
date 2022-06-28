@@ -71,7 +71,7 @@ uint16_t _battery(const char* page){
 
     //Serial.println(baterie_value);
 
-    if(old_baterie_value != baterie_value)
+    if(old_baterie_value >= baterie_value)
         Display_baterie_value(baterie_value,page);
 
     old_baterie_value = baterie_value;   

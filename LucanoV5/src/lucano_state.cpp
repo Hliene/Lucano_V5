@@ -19,7 +19,7 @@ uint16_t delimbing_height = 0;
 uint16_t old_delimbing_height = 0;
 
 //Abhängig vom Baumdurchmesser
-uint16_t hook_fall_counter;       // 20ms *300/2 = 3s
+uint16_t hook_fall_counter = 100;       // 20ms *300/2 = 3s
 
 //height of the Lucano
 uint16_t Lucano_height = 0;
@@ -48,8 +48,6 @@ uint16_t idle(void)
     digitalWrite(GREENLED,HIGH);
     digitalWrite(REDLED,LOW);
     
-    //_actuator(100);
-    //Serial.println("idle");
 
  // <<<<<<<<<<<<<<<<<<<< Adjust the declimbing height>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     if(plus_buttom() & (delimbing_height < MAX_DELCLIMBING_HEIGT))
@@ -62,7 +60,8 @@ uint16_t idle(void)
 
     old_delimbing_height= delimbing_height;
 
-    hook_fall_counter = getTFminiDataI2C();
+   // hook_fall_counter = getTFminiDataI2C();
+    hook_fall_counter = 400;
 
  //<<<<<<<<<<<<<<<<<<<<<<<Display Batterie Spannung>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     _battery("1");
@@ -80,7 +79,8 @@ uint16_t idle(void)
     if (confirmation_buttom()){
         delimbing_height =delimbing_height * cm2m;                                  // Weil der LIDAR Sensor die Werte in Cm ausgibt
         delimbing_height = delimbing_height - DIFF_HEIGT_SISSOR;                    //Anpassung des Abstandes zur Erde
-        delay(500);                                                                 //Dela für den nächsten State
+        delay(500);     
+        delimbing_height =150;                                                            //Dela für den nächsten State
         return HOOK_FALL_PROTECTION;
     }
 
@@ -96,8 +96,7 @@ uint16_t idle(void)
         return FINISHED; 
     }
     
-    delay(10);
-
+   // delay(10);
     return IDLE;
 }
 
@@ -202,7 +201,7 @@ uint16_t hook_fall_protection(void){
         } 
 
     // <<<<<<<<<<<<<<<<<<<<drive the Tree half around>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        if(hook_fall_counter){
+        if(hook_fall_counter >  5){
             hook_fall_counter = hook_fall_counter - (_drive_UP());
             delay(20);
         }
